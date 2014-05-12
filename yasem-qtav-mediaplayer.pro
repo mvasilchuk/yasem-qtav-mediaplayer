@@ -8,18 +8,14 @@ DESTDIR = $$BUILD_DIR/bin
 DLLDESTDIR = $$DESTDIR/plugins
 
 
-#clang {
-#    message("Linux")
-
-    SUBDIRS += \
+SUBDIRS += \
         QtAV \
         QtAvMediaPlayer
-#}
 
 QtAV.OUT_DIR = $$DESTDIR
 
 QtAvMediaPlayer.depends += QtAV
 
-
-#include(../common.pri)
-#DESTDIR = $$DEFAULT_PLUGIN_DIR
+OTHER_FILES += \
+    LICENSE \
+    README.md
