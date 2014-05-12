@@ -1,0 +1,7 @@
+{
+  "name":"LibAV mediaplayer plugin",
+  "version": "0.1",
+  "id": "libav-mediaplayer",
+    "roles": ["mediaplayer"],
+    "dependencies": []
+}

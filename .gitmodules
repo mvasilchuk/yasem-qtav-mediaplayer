@@ -1,0 +1,3 @@
+[submodule "QtAV"]
+	path = QtAV
+	url = git@github.com:mvasilchuk/yasem-qtav.git
