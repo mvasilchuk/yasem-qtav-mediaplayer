@@ -11,7 +11,6 @@ QT       = core gui widgets
 
 TARGET = yasem-qtav-mediaplayer
 TEMPLATE = lib
-CONFIG +=  plugin
 
 DEFINES += LIBAVMEDIAPLAYER_LIBRARY
 

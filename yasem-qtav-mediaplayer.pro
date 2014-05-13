@@ -1,8 +1,12 @@
+
+
+VERSION = 1.0.0
+
 TEMPLATE = subdirs
 
 CONFIG += ordered debug_and_release
 
-CONFIG += C++11
+CONFIG += c++11
 
 DESTDIR = $$BUILD_DIR/bin
 DLLDESTDIR = $$DESTDIR/plugins
