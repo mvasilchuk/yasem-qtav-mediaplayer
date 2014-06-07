@@ -188,7 +188,7 @@ void LibAvMediaPlayer::hide()
 
 void LibAvMediaPlayer::rect(const QRect &rect)
 {
-    STUB();
+    STUB_WITH_PARAMS(QStringList() << QString::number(rect.left()) << QString::number(rect.top()) << QString::number(rect.width())  << QString::number(rect.height()) );
     videoWidget->setGeometry(rect);
 }
 
