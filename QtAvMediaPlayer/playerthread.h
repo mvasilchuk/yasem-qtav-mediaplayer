@@ -3,7 +3,7 @@
 
 #include "QtAV/AVPlayer.h"
 #include <QtAV/AudioFormat.h>
-#include <QtAV/AudioOutputOpenAL.h>
+#include <QtAV/AudioOutput.h>
 
 #include <QThread>
 #include <QDebug>

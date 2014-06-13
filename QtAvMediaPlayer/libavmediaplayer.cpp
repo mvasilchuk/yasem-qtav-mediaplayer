@@ -9,7 +9,7 @@
 #include "QtAV/AudioOutput.h"
 #include "QtAV/QtAV_Global.h"
 #include <QtAV/AudioFormat.h>
-#include <QtAV/AudioOutputOpenAL.h>
+#include <QtAV/AudioOutput.h>
 
 #include <QApplication>
 #include <QList>
