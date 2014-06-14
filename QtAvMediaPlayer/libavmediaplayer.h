@@ -66,7 +66,6 @@ public:
 public:
     int audioPID();
     int bufferLoad();
-    long mediaLength();
     void position(qint64 pos);
     qint64 position();
     qint64 duration();

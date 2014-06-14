@@ -211,7 +211,7 @@ MediaPlayingState LibAvMediaPlayer::state()
 
 bool LibAvMediaPlayer::state(MediaPlayingState state)
 {
-    STUB();
+    STUB() << state;
     return true;
 }
 
@@ -247,12 +247,6 @@ int LibAvMediaPlayer::bufferLoad()
     return 100;
 }
 
-long LibAvMediaPlayer::mediaLength()
-{
-    STUB();
-    return 0;
-}
-
 qint64 LibAvMediaPlayer::position()
 {
     STUB();
@@ -267,7 +261,7 @@ qint64 LibAvMediaPlayer::duration()
 
 void LibAvMediaPlayer::audioPID(int pid)
 {
-    STUB();
+    STUB() << pid;
 }
 
 int LibAvMediaPlayer::loop()
@@ -278,7 +272,7 @@ int LibAvMediaPlayer::loop()
 
 void LibAvMediaPlayer::loop(int loop)
 {
-    STUB();
+    STUB() << loop;
 }
 
 bool LibAvMediaPlayer::mute()
@@ -289,13 +283,13 @@ bool LibAvMediaPlayer::mute()
 
 void LibAvMediaPlayer::mute(bool value)
 {
-    STUB();
+    STUB() << value;
     mediaPlayer->setMute(value);
 }
 
 void LibAvMediaPlayer::position(qint64 pos)
 {
-    STUB();
+    STUB() << pos;
     mediaPlayer->setPosition(pos);
 }
 
@@ -309,7 +303,7 @@ int LibAvMediaPlayer::volume()
 
 void LibAvMediaPlayer::volume(int vol)
 {
-    STUB();
+    STUB() << vol;
     //Q_ASSERT(mediaPlayer->audio());
     //mediaPlayer->audio()->setVolume(100 / vol);
 }
