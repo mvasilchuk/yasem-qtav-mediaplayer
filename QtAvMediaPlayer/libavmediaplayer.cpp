@@ -217,7 +217,7 @@ bool LibAvMediaPlayer::state(MediaPlayingState state)
 
 void LibAvMediaPlayer::aspectRatio(ASPECT_RATIO mode)
 {
-
+    STUB() << mode;
 }
 
 ASPECT_RATIO LibAvMediaPlayer::aspectRatio()
@@ -250,12 +250,15 @@ int LibAvMediaPlayer::bufferLoad()
 qint64 LibAvMediaPlayer::position()
 {
     STUB();
-    return mediaPlayer->position();
+    qint64 pos = mediaPlayer->position();
+    return pos;
 }
 
 qint64 LibAvMediaPlayer::duration()
 {
-    return mediaPlayer->duration();
+    STUB();
+    qint64 duration = mediaPlayer->duration();
+    return duration;
 }
 
 
