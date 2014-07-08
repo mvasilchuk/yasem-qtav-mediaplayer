@@ -14,7 +14,7 @@ TEMPLATE = lib
 
 DEFINES += LIBAVMEDIAPLAYER_LIBRARY
 
-INCLUDEPATH += ../../yasem-core \
+INCLUDEPATH += ../../../yasem-core \
     ../QtAV/src/
 
 SOURCES += libavmediaplayer.cpp
@@ -23,7 +23,7 @@ HEADERS += libavmediaplayer.h\
         libavmediaplayer_global.h \
         ../QtAV/src/QtAV/WidgetRenderer.h \
         ../QtAV/src/QtAV/AVPlayer.h \
-        ../../yasem-core/mediasignalsender.h \
+        ../../../yasem-core/mediasignalsender.h \
         playerthread.h
 
 unix {
@@ -31,7 +31,7 @@ unix {
     INSTALLS += targe
 }
 
-BUILD_DIR=$$OUT_PWD/../../
+BUILD_DIR=$$OUT_PWD/../../../
 message($$BUILD_DIR)
 
 
@@ -48,10 +48,10 @@ LIBS += -L$$BUILD_DIR/bin/libs -lQtAV
 OTHER_FILES += \
     metadata.json 
 
-#include(../../common.pri)
+#include(../../../common.pri)
 #DESTDIR = D_DIR
 
-DESTDIR=../../bin/plugins
+DESTDIR=../../../bin/plugins
 
 DEPENDENCY_LIBRARIES = QtAV
 
