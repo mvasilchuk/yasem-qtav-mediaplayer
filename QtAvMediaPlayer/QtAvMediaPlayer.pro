@@ -5,26 +5,30 @@
 #-------------------------------------------------
 
 
-
+VERSION = 1.0.0
 
 QT       = core gui widgets
+
+CONFIG += ordered debug_and_release
 
 TARGET = yasem-qtav-mediaplayer
 TEMPLATE = lib
 
-DEFINES += LIBAVMEDIAPLAYER_LIBRARY
+DEFINES += QTAVMEDIAPLAYER_LIBRARY
 
 INCLUDEPATH += ../../../yasem-core \
     ../QtAV/src/
 
-SOURCES += libavmediaplayer.cpp
+SOURCES += \
+    qtavmediaplayer.cpp
 
-HEADERS += libavmediaplayer.h\
-        libavmediaplayer_global.h \
+HEADERS +=\
         ../QtAV/src/QtAV/WidgetRenderer.h \
         ../QtAV/src/QtAV/AVPlayer.h \
         ../../../yasem-core/mediasignalsender.h \
-        playerthread.h
+        playerthread.h \
+        qtavmediaplayer.h \
+        qtavmediaplayer_global.h
 
 unix {
     target.path = /usr/lib
@@ -34,26 +38,21 @@ unix {
 BUILD_DIR=$$OUT_PWD/../../../
 message($$BUILD_DIR)
 
-
-
-unix:!mac{
+unix:!mac {
   QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/
   QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/../libs
   QMAKE_RPATH=
 }
 
 
-LIBS += -L$$BUILD_DIR/bin/libs -lQtAV
+
+win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQtAV
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQtAVd
+else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQtAV
 
 OTHER_FILES += \
     metadata.json 
 
-#include(../../../common.pri)
-#DESTDIR = D_DIR
-
 DESTDIR=../../../bin/plugins
 
 DEPENDENCY_LIBRARIES = QtAV
-
-#include(../QtAV/src/libQtAV.pri)
-

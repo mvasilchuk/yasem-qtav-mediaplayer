@@ -8,7 +8,7 @@
 #include "QtAV/AVPlayer.h"
 #include "playerthread.h"
 
-#include "libavmediaplayer_global.h"
+#include "qtavmediaplayer_global.h"
 
 #include <QRect>
 
@@ -16,16 +16,16 @@ namespace yasem {
 
 class GuiPlugin;
 
-class LIBAVMEDIAPLAYERSHARED_EXPORT LibAvMediaPlayer: public QObject, public virtual Plugin, public MediaPlayerPlugin
+class QTAVMEDIAPLAYERSHARED_EXPORT QtAvMediaPlayer: public QObject, public virtual Plugin, public MediaPlayerPlugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.mvas.yasem.LibAvMediaPlayer/1.0" FILE "metadata.json")
+    Q_PLUGIN_METADATA(IID "com.mvas.yasem.QtAvMediaPlayer/1.0" FILE "metadata.json")
     Q_INTERFACES(yasem::Plugin yasem::MediaPlayerPlugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
     Q_CLASSINFO("description", "LibAV media player for YASEM")
 public:
-    LibAvMediaPlayer();
+    QtAvMediaPlayer();
 
 protected:
     PlayerThread* playerThread;

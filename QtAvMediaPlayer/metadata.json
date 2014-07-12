@@ -1,5 +1,5 @@
 {
-  "name":"LibAV mediaplayer plugin",
+  "name":"QtAV mediaplayer plugin",
   "version": "0.1",
   "id": "libav-mediaplayer",
     "roles": ["mediaplayer"],
