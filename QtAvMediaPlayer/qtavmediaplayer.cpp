@@ -203,7 +203,6 @@ void QtAvMediaPlayer::hide()
 
 void QtAvMediaPlayer::rect(const QRect &rect)
 {
-    STUB() << rect;
     videoWidget->setGeometry(rect);
 }
 
