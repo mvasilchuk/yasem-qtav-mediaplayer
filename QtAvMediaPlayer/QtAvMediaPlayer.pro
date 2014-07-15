@@ -11,6 +11,8 @@ QT       = core gui widgets
 
 CONFIG += ordered debug_and_release
 
+CONFIG += c++11
+
 TARGET = yasem-qtav-mediaplayer
 TEMPLATE = lib
 

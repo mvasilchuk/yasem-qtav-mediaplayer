@@ -83,6 +83,11 @@ public:
 
     GuiPlugin* gui;
 
+
+    // Plugin interface
+public:
+    void register_dependencies();
+    void register_roles();
 };
 
 }

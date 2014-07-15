@@ -53,7 +53,7 @@ void QtAvMediaPlayer::customMessageHandler(QtMsgType type, const QMessageLogCont
 PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
 {
     STUB();
-    gui = dynamic_cast<GuiPlugin*>(PluginManager::instance()->getByRole("gui"));
+    gui = dynamic_cast<GuiPlugin*>(PluginManager::instance()->getByRole(ROLE_GUI));
     videoWidget = new QtAV::WidgetRenderer();
     mediaPlayer = new QtAV::AVPlayer();
     playerThread = new PlayerThread(mediaPlayer);
@@ -106,7 +106,7 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     connect(mediaPlayer, SIGNAL(contrastChanged(int)),            &this->mediaSignalSender, SIGNAL(contrastChanged(int)));
     connect(mediaPlayer, SIGNAL(saturationChanged(int)),          &this->mediaSignalSender, SIGNAL(saturationChanged(int)));
 #else
-    connect(mediaPlayer, &AVPlayer::paused(bool),         &this->mediaSignalSender, &MediaSignalSender::paused(bool));
+    connect(mediaPlayer, &AVPlayer::paused,               &this->mediaSignalSender, &MediaSignalSender::paused);
     connect(mediaPlayer, &AVPlayer::started,              &this->mediaSignalSender, &MediaSignalSender::started);
     connect(mediaPlayer, &AVPlayer::stopped,              &this->mediaSignalSender, &MediaSignalSender::stopped);
     connect(mediaPlayer, &AVPlayer::speedChanged,         &this->mediaSignalSender, &MediaSignalSender::speedChanged);
@@ -319,4 +319,14 @@ void QtAvMediaPlayer::volume(int vol)
     STUB() << vol;
     //Q_ASSERT(mediaPlayer->audio());
     //mediaPlayer->audio()->setVolume(100 / vol);
+}
+
+
+void yasem::QtAvMediaPlayer::register_dependencies()
+{
+}
+
+void yasem::QtAvMediaPlayer::register_roles()
+{
+    register_role(ROLE_MEDIA);
 }
