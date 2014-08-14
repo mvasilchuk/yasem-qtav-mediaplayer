@@ -263,7 +263,6 @@ int QtAvMediaPlayer::bufferLoad()
 
 qint64 QtAvMediaPlayer::position()
 {
-    STUB();
     qint64 pos = mediaPlayer->position();
     return pos;
 }
@@ -309,16 +308,25 @@ void QtAvMediaPlayer::position(qint64 pos)
 int QtAvMediaPlayer::volume()
 {
     STUB();
-    //Q_ASSERT(mediaPlayer->audio());
-    //return (int)(mediaPlayer->audio()->volume() * 100);
+    AudioOutput* audio = mediaPlayer->audio();
+    if(audio != NULL)
+    {
+        return (int)(audio->volume() * 100);
+    }
     return 100;
 }
 
 void QtAvMediaPlayer::volume(int vol)
 {
     STUB() << vol;
-    //Q_ASSERT(mediaPlayer->audio());
-    //mediaPlayer->audio()->setVolume(100 / vol);
+    AudioOutput* audio = mediaPlayer->audio();
+    if(audio != NULL)
+    {
+        if(vol > 0)
+            audio->setVolume(100 / vol);
+        else
+            audio->setVolume(0);
+    }
 }
 
 
