@@ -48,9 +48,9 @@ unix:!mac {
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQtAV
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQtAVd
-else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQtAV
+win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AV
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AVd
+else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQt5AV
 
 OTHER_FILES += \
     metadata.json 
