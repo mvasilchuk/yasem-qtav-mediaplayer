@@ -5,11 +5,11 @@
 #-------------------------------------------------
 
 
-VERSION = 1.0.0
+VERSION = 0.1.0
 
 QT       = core gui widgets
 
-CONFIG += ordered debug_and_release
+CONFIG += ordered
 
 CONFIG += c++11
 
@@ -46,8 +46,6 @@ unix:!mac {
   QMAKE_LFLAGS += -Wl,--rpath=\\\$\$ORIGIN/../libs
   QMAKE_RPATH=
 }
-
-
 
 win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AV -lQt5AVWidgets
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AVd -lQt5AVWidgetsd
