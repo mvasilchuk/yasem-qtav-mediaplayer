@@ -20,6 +20,7 @@ DEFINES += QTAVMEDIAPLAYER_LIBRARY
 
 INCLUDEPATH += ../../../yasem-core \
     ../QtAV/src/ \
+    ../QtAV/widgets/
 
 SOURCES += \
     qtavmediaplayer.cpp
