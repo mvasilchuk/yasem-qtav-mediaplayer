@@ -4,7 +4,7 @@
 #include "playerthread.h"
 #include "core.h"
 
-#include "QtAV/WidgetRenderer.h"
+#include "QtAVWidgets/WidgetRenderer.h"
 #include "QtAV/AVPlayer.h"
 #include "QtAV/AudioOutput.h"
 #include "QtAV/QtAV_Global.h"

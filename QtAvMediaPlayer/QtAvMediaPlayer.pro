@@ -19,13 +19,13 @@ TEMPLATE = lib
 DEFINES += QTAVMEDIAPLAYER_LIBRARY
 
 INCLUDEPATH += ../../../yasem-core \
-    ../QtAV/src/
+    ../QtAV/src/ \
 
 SOURCES += \
     qtavmediaplayer.cpp
 
 HEADERS +=\
-        ../QtAV/src/QtAV/WidgetRenderer.h \
+        ../QtAV/widgets/QtAVWidgets/WidgetRenderer.h \
         ../QtAV/src/QtAV/AVPlayer.h \
         ../../../yasem-core/mediasignalsender.h \
         playerthread.h \
@@ -48,9 +48,9 @@ unix:!mac {
 
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AV
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AVd
-else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQt5AV
+win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AV -lQt5AVWidgets
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AVd -lQt5AVWidgetsd
+else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQt5AV -lQt5AVWidgets
 
 OTHER_FILES += \
     metadata.json 

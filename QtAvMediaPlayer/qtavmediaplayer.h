@@ -4,7 +4,7 @@
 #include "macros.h"
 #include "mediaplayerplugin.h"
 #include "plugin.h"
-#include "QtAV/WidgetRenderer.h"
+#include "QtAVWidgets/WidgetRenderer.h"
 #include "QtAV/AVPlayer.h"
 #include "playerthread.h"
 
