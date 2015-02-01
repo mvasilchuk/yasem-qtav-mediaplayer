@@ -49,7 +49,8 @@ unix:!mac {
 
 win32:CONFIG(release, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AV -lQt5AVWidgets
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$BUILD_DIR/bin -lQt5AVd -lQt5AVWidgetsd
-else:unix: LIBS += -L$$BUILD_DIR/bin/libs -lQt5AV -lQt5AVWidgets
+else:unix:clang: LIBS += -L$$BUILD_DIR/bin/libs -lQt5AV -lQt5AVWidgets
+else:unix:gcc: LIBS += -L$$BUILD_DIR/bin/libs -lQtAV -lQtAVWidgets
 
 OTHER_FILES += \
     metadata.json 
