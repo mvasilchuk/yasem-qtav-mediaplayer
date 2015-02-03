@@ -9,9 +9,7 @@ VERSION = 0.1.0
 
 QT       = core gui widgets
 
-CONFIG += ordered
-
-CONFIG += c++11
+CONFIG += c++11 debug_and_release
 
 TARGET = yasem-qtav-mediaplayer
 TEMPLATE = lib
@@ -35,7 +33,7 @@ HEADERS +=\
 
 unix {
     target.path = /usr/lib
-    INSTALLS += targe
+    INSTALLS += target
 }
 
 BUILD_DIR=$$OUT_PWD/../../../

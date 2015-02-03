@@ -5,7 +5,7 @@ VERSION = 0.1.0
 
 TEMPLATE = subdirs
 
-CONFIG += ordered
+CONFIG += ordered debug_and_release
 CONFIG += c++11
 
 DESTDIR = $$BUILD_DIR/bin
