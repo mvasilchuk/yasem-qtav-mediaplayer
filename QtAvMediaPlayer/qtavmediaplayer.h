@@ -6,7 +6,6 @@
 #include "plugin.h"
 #include "QtAVWidgets/WidgetRenderer.h"
 #include "QtAV/AVPlayer.h"
-#include "playerthread.h"
 
 #include "qtavmediaplayer_global.h"
 
@@ -28,7 +27,6 @@ public:
     QtAvMediaPlayer();
 
 protected:
-    PlayerThread* playerThread;
     QtAV::WidgetRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
 

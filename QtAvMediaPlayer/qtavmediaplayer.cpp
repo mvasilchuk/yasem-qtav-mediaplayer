@@ -1,7 +1,6 @@
 #include "qtavmediaplayer.h"
 #include "guiplugin.h"
 #include "pluginmanager.h"
-#include "playerthread.h"
 #include "core.h"
 
 #include "QtAVWidgets/WidgetRenderer.h"
@@ -56,39 +55,10 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     gui = dynamic_cast<GuiPlugin*>(PluginManager::instance()->getByRole(ROLE_GUI));
     videoWidget = new QtAV::WidgetRenderer();
     mediaPlayer = new QtAV::AVPlayer();
-    playerThread = new PlayerThread(mediaPlayer);
-    playerThread->setObjectName("QtAV Player thread");
-    mediaPlayer->moveToThread(playerThread);
-
-    AudioOutputFactory factory;
-    QStringList names;
-    std::vector<std::string> vNames = factory.registeredNames();
-    std::vector<std::string>::iterator iter;
-    for(iter = vNames.begin(); iter != vNames.end(); iter++)
-    {
-        names.append(QString::fromStdString(*iter));
-    }
+    mediaPlayer->setAsyncLoad(true);
+    mediaPlayer->setInterruptTimeout(10000);
 
     mediaPlayer->setRenderer(videoWidget);
-
-    /**
-    void mediaStatusChanged(QtAV::MediaStatus status); //explictly use QtAV::MediaStatus
-    void error(const QtAV::AVError& e); //explictly use QtAV::AVError in connection for Qt4 syntax
-    void paused(bool p);
-    void started();
-    void stopped();
-    void speedChanged(qreal speed);
-    void repeatChanged(int r);
-    void currentRepeatChanged(int r);
-    void startPositionChanged(qint64 position);
-    void stopPositionChanged(qint64 position);
-    void positionChanged(qint64 position);
-    void brightnessChanged(int val);
-    void contrastChanged(int val);
-    void saturationChanged(int val);
-      */
-
-
 
 #ifdef Q_OS_WIN
     //FIXME() << "Media player signals not connected under Windows!";
@@ -119,6 +89,50 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     connect(mediaPlayer, &AVPlayer::contrastChanged,      &this->mediaSignalSender, &MediaSignalSender::contrastChanged);
     connect(mediaPlayer, &AVPlayer::saturationChanged,    &this->mediaSignalSender, &MediaSignalSender::saturationChanged);
 #endif //Q_OS_WIN32
+
+    connect(mediaPlayer, &AVPlayer::mediaStatusChanged,   [=](QtAV::MediaStatus status) {
+        // I resend all signals in case they are changed in QtAV
+        switch(status)
+        {
+            case QtAV::MediaStatus::UnknownMediaStatus: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::UnknownMediaStatus);
+                break;
+            }
+            case QtAV::MediaStatus::NoMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::NoMedia);
+                break;
+            }
+            case QtAV::MediaStatus::LoadingMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::LoadingMedia);
+                break;
+            }
+            case QtAV::MediaStatus::StalledMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::StalledMedia);
+                break;
+            }
+            case QtAV::MediaStatus::BufferingMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::BufferingMedia);
+                break;
+            }
+            case QtAV::MediaStatus::BufferedMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::BufferedMedia);
+                break;
+            }
+            case QtAV::MediaStatus::EndOfMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::EndOfMedia);
+                break;
+            }
+            case QtAV::MediaStatus::InvalidMedia: {
+                emit this->mediaSignalSender.statusChanged(MediaStatus::InvalidMedia);
+                break;
+            }
+            default: {
+                break;
+            }
+
+        }
+    });
+
 
     return PLUGIN_ERROR_NO_ERROR;
 }
@@ -153,19 +167,10 @@ bool QtAvMediaPlayer::mediaPlay(const QString &url)
 {
     if(!processHooks(MediaPlayerPlugin::BEFORE_PLAY)) return false;
 
-    if(playerThread->isRunning())
-    {
-        qDebug() << playerThread->objectName() << "is running. Terminating...";
-        playerThread->terminate();
-        playerThread->wait(100);
-        qDebug() << "Video player thread terminated!";
-    }
-
-    mediaPlayer->setFile(url);
-    playerThread->start();
+    mediaPlayer->play(url);
     videoWidget->show();
 
-    return processHooks(MediaPlayerPlugin::BEFORE_PLAY);
+    return processHooks(MediaPlayerPlugin::AFTER_PLAY);
 }
 
 bool QtAvMediaPlayer::mediaContinue()
@@ -203,6 +208,10 @@ void QtAvMediaPlayer::hide()
 
 void QtAvMediaPlayer::rect(const QRect &rect)
 {
+    if(rect.height() > 0)
+        DEBUG() << "aspect ratio for video container: " << (((float)rect.width()) / rect.height());
+    else
+        WARN() << "video container size has 0 height";
     videoWidget->setGeometry(rect);
 }
 

@@ -27,7 +27,6 @@ HEADERS +=\
         ../QtAV/widgets/QtAVWidgets/WidgetRenderer.h \
         ../QtAV/src/QtAV/AVPlayer.h \
         ../../../yasem-core/mediasignalsender.h \
-        playerthread.h \
         qtavmediaplayer.h \
         qtavmediaplayer_global.h
 
