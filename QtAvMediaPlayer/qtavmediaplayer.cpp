@@ -21,6 +21,7 @@ QtAvMediaPlayer::QtAvMediaPlayer()
 {
     QtAV::setFFmpegLogHandler(NULL);
     fullscreen(true);
+    mAspectRatio = ASPECT_RATIO_16_9;
     //qInstallMessageHandler(customMessageHandler);
 }
 
@@ -75,6 +76,7 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     connect(mediaPlayer, SIGNAL(brightnessChanged(int)),          &this->mediaSignalSender, SIGNAL(brightnessChanged(int)));
     connect(mediaPlayer, SIGNAL(contrastChanged(int)),            &this->mediaSignalSender, SIGNAL(contrastChanged(int)));
     connect(mediaPlayer, SIGNAL(saturationChanged(int)),          &this->mediaSignalSender, SIGNAL(saturationChanged(int)));
+    connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus));
 #else
     connect(mediaPlayer, &AVPlayer::paused,               &this->mediaSignalSender, &MediaSignalSender::paused);
     connect(mediaPlayer, &AVPlayer::started,              &this->mediaSignalSender, &MediaSignalSender::started);
@@ -88,53 +90,53 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     connect(mediaPlayer, &AVPlayer::brightnessChanged,    &this->mediaSignalSender, &MediaSignalSender::brightnessChanged);
     connect(mediaPlayer, &AVPlayer::contrastChanged,      &this->mediaSignalSender, &MediaSignalSender::contrastChanged);
     connect(mediaPlayer, &AVPlayer::saturationChanged,    &this->mediaSignalSender, &MediaSignalSender::saturationChanged);
+    connect(mediaPlayer, &AVPlayer::mediaStatusChanged,   this, &QtAvMediaPlayer::onMediaStatusChanged);
 #endif //Q_OS_WIN32
 
-    connect(mediaPlayer, &AVPlayer::mediaStatusChanged,   [=](QtAV::MediaStatus status) {
-        // I resend all signals in case they are changed in QtAV
-        switch(status)
-        {
-            case QtAV::MediaStatus::UnknownMediaStatus: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::UnknownMediaStatus);
-                break;
-            }
-            case QtAV::MediaStatus::NoMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::NoMedia);
-                break;
-            }
-            case QtAV::MediaStatus::LoadingMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::LoadingMedia);
-                break;
-            }
-            case QtAV::MediaStatus::StalledMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::StalledMedia);
-                break;
-            }
-            case QtAV::MediaStatus::BufferingMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::BufferingMedia);
-                break;
-            }
-            case QtAV::MediaStatus::BufferedMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::BufferedMedia);
-                break;
-            }
-            case QtAV::MediaStatus::EndOfMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::EndOfMedia);
-                break;
-            }
-            case QtAV::MediaStatus::InvalidMedia: {
-                emit this->mediaSignalSender.statusChanged(MediaStatus::InvalidMedia);
-                break;
-            }
-            default: {
-                break;
-            }
-
-        }
-    });
-
-
     return PLUGIN_ERROR_NO_ERROR;
+}
+
+void QtAvMediaPlayer::onMediaStatusChanged(QtAV::MediaStatus status)
+{
+    switch(status)
+    {
+        case QtAV::MediaStatus::UnknownMediaStatus: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::UnknownMediaStatus);
+            break;
+        }
+        case QtAV::MediaStatus::NoMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::NoMedia);
+            break;
+        }
+        case QtAV::MediaStatus::LoadingMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::LoadingMedia);
+            break;
+        }
+        case QtAV::MediaStatus::StalledMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::StalledMedia);
+            break;
+        }
+        case QtAV::MediaStatus::BufferingMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::BufferingMedia);
+            break;
+        }
+        case QtAV::MediaStatus::BufferedMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::BufferedMedia);
+            break;
+        }
+        case QtAV::MediaStatus::EndOfMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::EndOfMedia);
+            break;
+        }
+        case QtAV::MediaStatus::InvalidMedia: {
+            emit this->mediaSignalSender.statusChanged(MediaStatus::InvalidMedia);
+            break;
+        }
+        default: {
+            break;
+        }
+
+    }
 }
 
 PLUGIN_ERROR_CODES QtAvMediaPlayer::deinitialize()
@@ -241,11 +243,30 @@ bool QtAvMediaPlayer::state(MediaPlayingState state)
 void QtAvMediaPlayer::aspectRatio(ASPECT_RATIO mode)
 {
     STUB() << mode;
+
+    QtAV::VideoRenderer* renderer = mediaPlayer->renderer();
+    switch(mAspectRatio)
+    {
+        case ASPECT_RATIO_AUTO: {
+            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+            break;
+        }
+        case ASPECT_RATIO_16_9: {
+            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::CustomAspectRation);
+            renderer->setOutAspectRatio(16.0 / 9);
+            break;
+        }
+        case ASPECT_RATIO_4_3: {
+            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::CustomAspectRation);
+            renderer->setOutAspectRatio(4.0 / 3);
+            break;
+        }
+    }
 }
 
 ASPECT_RATIO QtAvMediaPlayer::aspectRatio()
 {
-    return ASPECT_RATIO_AUTO;
+    return (ASPECT_RATIO)mAspectRatio;
 }
 
 void QtAvMediaPlayer::move(int x, int y)

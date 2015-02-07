@@ -29,8 +29,10 @@ public:
 protected:
     QtAV::WidgetRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
+    int mAspectRatio;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
+
 
     // Plugin interface
 public:
@@ -60,8 +62,6 @@ public:
     void move(int x, int y);
     void raise();
 
-    // MediaPlayerPlugin interface
-public:
     int audioPID();
     int bufferLoad();
     void position(qint64 pos);
@@ -86,6 +86,8 @@ public:
 public:
     void register_dependencies();
     void register_roles();
+protected slots:
+    void onMediaStatusChanged(QtAV::MediaStatus status);
 };
 
 }
