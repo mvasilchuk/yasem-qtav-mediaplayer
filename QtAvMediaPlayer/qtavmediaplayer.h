@@ -57,7 +57,7 @@ public:
     bool isVisible();
     MediaPlayingState state();
     bool state(MediaPlayingState state);
-    void aspectRatio(ASPECT_RATIO mode);
+    void aspectRatio(ASPECT_RATIO ratio);
     ASPECT_RATIO aspectRatio();
     void move(int x, int y);
     void raise();

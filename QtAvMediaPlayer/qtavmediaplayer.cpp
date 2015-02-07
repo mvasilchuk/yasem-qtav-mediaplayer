@@ -21,7 +21,7 @@ QtAvMediaPlayer::QtAvMediaPlayer()
 {
     QtAV::setFFmpegLogHandler(NULL);
     fullscreen(true);
-    mAspectRatio = ASPECT_RATIO_16_9;
+    mAspectRatio = ASPECT_RATIO_AUTO;
     //qInstallMessageHandler(customMessageHandler);
 }
 
@@ -210,10 +210,6 @@ void QtAvMediaPlayer::hide()
 
 void QtAvMediaPlayer::rect(const QRect &rect)
 {
-    if(rect.height() > 0)
-        DEBUG() << "aspect ratio for video container: " << (((float)rect.width()) / rect.height());
-    else
-        WARN() << "video container size has 0 height";
     videoWidget->setGeometry(rect);
 }
 
@@ -240,28 +236,71 @@ bool QtAvMediaPlayer::state(MediaPlayingState state)
     return true;
 }
 
-void QtAvMediaPlayer::aspectRatio(ASPECT_RATIO mode)
+void QtAvMediaPlayer::aspectRatio(ASPECT_RATIO ratio)
 {
-    STUB() << mode;
+    STUB() << ratio;
+
+    mAspectRatio = ratio;
 
     QtAV::VideoRenderer* renderer = mediaPlayer->renderer();
+
+    if(mAspectRatio == ASPECT_RATIO_AUTO)
+    {
+        renderer->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+        return;
+    }
+
+    renderer->setOutAspectRatioMode(QtAV::VideoRenderer::CustomAspectRation);
+    float a_ratio = 1;
     switch(mAspectRatio)
     {
-        case ASPECT_RATIO_AUTO: {
-            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
+        case ASPECT_RATIO_1_1: {
+            a_ratio = 1;
             break;
         }
-        case ASPECT_RATIO_16_9: {
-            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::CustomAspectRation);
-            renderer->setOutAspectRatio(16.0 / 9);
+        case ASPECT_RATIO_5_4: {
+            a_ratio = 16.0 / 9;
             break;
         }
         case ASPECT_RATIO_4_3: {
-            renderer->setOutAspectRatioMode(QtAV::VideoRenderer::CustomAspectRation);
-            renderer->setOutAspectRatio(4.0 / 3);
+            a_ratio = 4.0 / 3;
+            break;
+        }
+        case ASPECT_RATIO_11_8: {
+            a_ratio = 11.0 / 8;
+            break;
+        }
+        case ASPECT_RATIO_14_10: {
+            a_ratio = 14.0 / 10;
+            break;
+        }
+        case ASPECT_RATIO_3_2: {
+            a_ratio = 3.0 / 2;
+            break;
+        }
+        case ASPECT_RATIO_14_9: {
+            a_ratio = 14.0 / 9;
+            break;
+        }
+        case ASPECT_RATIO_16_10: {
+            a_ratio = 16.0 / 10;
+            break;
+        }
+
+        case ASPECT_RATIO_16_9: {
+            a_ratio = 16.0 / 9;
+            break;
+        }
+        case ASPECT_RATIO_2_35_1: {
+            a_ratio = 2.35 / 1;
+            break;
+        }
+        default: {
+            a_ratio = 16.0 / 9;
             break;
         }
     }
+    renderer->setOutAspectRatio(a_ratio);
 }
 
 ASPECT_RATIO QtAvMediaPlayer::aspectRatio()
