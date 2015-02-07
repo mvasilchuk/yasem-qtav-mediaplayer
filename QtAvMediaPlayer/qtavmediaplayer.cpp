@@ -76,7 +76,7 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     connect(mediaPlayer, SIGNAL(brightnessChanged(int)),          &this->mediaSignalSender, SIGNAL(brightnessChanged(int)));
     connect(mediaPlayer, SIGNAL(contrastChanged(int)),            &this->mediaSignalSender, SIGNAL(contrastChanged(int)));
     connect(mediaPlayer, SIGNAL(saturationChanged(int)),          &this->mediaSignalSender, SIGNAL(saturationChanged(int)));
-    connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus));
+    connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
 #else
     connect(mediaPlayer, &AVPlayer::paused,               &this->mediaSignalSender, &MediaSignalSender::paused);
     connect(mediaPlayer, &AVPlayer::started,              &this->mediaSignalSender, &MediaSignalSender::started);
