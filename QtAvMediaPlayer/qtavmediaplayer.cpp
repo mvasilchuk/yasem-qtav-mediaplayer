@@ -58,7 +58,6 @@ PLUGIN_ERROR_CODES QtAvMediaPlayer::initialize()
     mediaPlayer = new QtAV::AVPlayer();
     mediaPlayer->setAsyncLoad(true);
     mediaPlayer->setInterruptTimeout(10000);
-
     mediaPlayer->setRenderer(videoWidget);
 
 #ifdef Q_OS_WIN
@@ -171,6 +170,7 @@ bool QtAvMediaPlayer::mediaPlay(const QString &url)
 
     mediaPlayer->play(url);
     videoWidget->show();
+    aspectRatio(mAspectRatio);
 
     return processHooks(MediaPlayerPlugin::AFTER_PLAY);
 }

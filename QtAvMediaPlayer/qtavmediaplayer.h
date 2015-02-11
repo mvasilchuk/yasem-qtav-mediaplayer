@@ -29,7 +29,7 @@ public:
 protected:
     QtAV::WidgetRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
-    int mAspectRatio;
+    ASPECT_RATIO mAspectRatio;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
 
