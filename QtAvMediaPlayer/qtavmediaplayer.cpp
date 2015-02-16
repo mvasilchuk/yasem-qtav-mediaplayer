@@ -13,6 +13,7 @@
 #include <QApplication>
 #include <QList>
 #include <QDebug>
+#include <QMetaProperty>
 
 using namespace yasem;
 using namespace QtAV;
@@ -321,7 +322,7 @@ void QtAvMediaPlayer::raise()
 int QtAvMediaPlayer::audioPID()
 {
     STUB();
-    return 0;
+    return mediaPlayer->currentAudioStream();
 }
 
 int QtAvMediaPlayer::bufferLoad()
@@ -343,10 +344,37 @@ qint64 QtAvMediaPlayer::duration()
     return duration;
 }
 
+int QtAvMediaPlayer::getBrightness()
+{
+    return mediaPlayer->brightness();
+}
+
+int QtAvMediaPlayer::getContrast()
+{
+    return mediaPlayer->contrast();
+}
+
 
 void QtAvMediaPlayer::audioPID(int pid)
 {
     STUB() << pid;
+    mediaPlayer->setAudioStream(pid);
+}
+
+QList<AudioLangInfo> QtAvMediaPlayer::getAudioLanguages()
+{
+    QList<AudioLangInfo> languages;
+    int count = mediaPlayer->audioStreamCount();
+    for(int index = 0; index < count; index++)
+    {
+        languages.append(AudioLangInfo(index, QString::number(index), QString::number(index)));
+    }
+    return languages;
+}
+
+void QtAvMediaPlayer::setAudioLanguage(int index)
+{
+    mediaPlayer->setAudioStream(index);
 }
 
 int QtAvMediaPlayer::loop()
@@ -396,6 +424,14 @@ void QtAvMediaPlayer::volume(int vol)
         else
             audio->setVolume(0);
     }
+}
+
+MediaMetadata QtAvMediaPlayer::getMetadata()
+{
+    MediaMetadata metadata;
+    metadata.filename = mediaPlayer->file();
+
+    return metadata;
 }
 
 

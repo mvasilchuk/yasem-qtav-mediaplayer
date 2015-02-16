@@ -30,6 +30,7 @@ protected:
     QtAV::WidgetRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
     ASPECT_RATIO mAspectRatio;
+    GuiPlugin* gui;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
 
@@ -68,6 +69,9 @@ public:
     qint64 position();
     qint64 duration();
 
+    int getBrightness();
+    int getContrast();
+
     // MediaPlayerPlugin interface
 
     void audioPID(int pid);
@@ -79,13 +83,15 @@ public:
     int volume();
     void volume(int vol);
 
-    GuiPlugin* gui;
-
+    MediaMetadata getMetadata();
 
     // Plugin interface
 public:
     void register_dependencies();
     void register_roles();
+public slots:
+    QList<AudioLangInfo> getAudioLanguages();
+    void setAudioLanguage(int index);
 protected slots:
     void onMediaStatusChanged(QtAV::MediaStatus status);
 };
