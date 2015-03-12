@@ -15,8 +15,9 @@ class GuiPluginObject;
 
 class QtAVMediaPlayerObject: public MediaPlayerPluginObject
 {
+    Q_OBJECT
 public:
-    QtAVMediaPlayerObject(Plugin* plugin, QObject* parent = 0);
+    QtAVMediaPlayerObject(Plugin* plugin);
     virtual ~QtAVMediaPlayerObject();
 
     void parent(QWidget *parent);

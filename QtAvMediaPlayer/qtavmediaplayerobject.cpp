@@ -18,8 +18,8 @@
 using namespace yasem;
 using namespace QtAV;
 
-QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin, QObject* parent):
-    MediaPlayerPluginObject(plugin, parent),
+QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
+    MediaPlayerPluginObject(plugin),
     m_aspect_ratio(ASPECT_RATIO_16_9)
 {
     QtAV::setFFmpegLogHandler(NULL);
