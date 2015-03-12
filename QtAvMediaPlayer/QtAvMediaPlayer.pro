@@ -20,15 +20,25 @@ INCLUDEPATH += ../../../yasem-core \
     ../QtAV/src/ \
     ../QtAV/widgets/
 
+DEPENDPATH += ../../yasem-core/
+
 SOURCES += \
-    qtavmediaplayer.cpp
+    ../../../yasem-core/plugin.cpp \
+    qtavmediaplayerplugin.cpp \
+    qtavmediaplayerobject.cpp \
+    ../../../yasem-core/mediaplayerpluginobject.cpp
 
 HEADERS +=\
-        ../QtAV/widgets/QtAVWidgets/WidgetRenderer.h \
-        ../QtAV/src/QtAV/AVPlayer.h \
-        ../../../yasem-core/mediasignalsender.h \
-        qtavmediaplayer.h \
-        qtavmediaplayer_global.h
+    ../QtAV/widgets/QtAVWidgets/WidgetRenderer.h \
+    ../QtAV/src/QtAV/AVPlayer.h \
+    ../../../yasem-core/abstractpluginobject.h \
+    ../../../yasem-core/mediasignalsender.h \
+    ../../../yasem-core/mediaplayerpluginobject.h \
+    qtavmediaplayer_global.h \
+    ../../../yasem-core/plugin.h \
+    qtavmediaplayerplugin.h \
+    qtavmediaplayerobject.h \
+    ../../../yasem-core/browserpluginobject.h
 
 unix {
     target.path = /usr/lib
