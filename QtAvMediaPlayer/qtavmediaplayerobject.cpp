@@ -408,18 +408,18 @@ PluginObjectResult yasem::QtAVMediaPlayerObject::init()
 #ifdef Q_OS_WIN
     //FIXME() << "Media player signals not connected under Windows!";
     // New signal/slot connection doesn't work under windows  because signal defines two times
-    connect(mediaPlayer, SIGNAL(paused(bool)),                    &this->mediaSignalSender, SIGNAL(paused(bool)));
-    connect(mediaPlayer, SIGNAL(started()),                       &this->mediaSignalSender, SIGNAL(started()));
-    connect(mediaPlayer, SIGNAL(stopped()),                       &this->mediaSignalSender, SIGNAL(stopped()));
-    connect(mediaPlayer, SIGNAL(speedChanged(qreal)),             &this->mediaSignalSender, SIGNAL(speedChanged(qreal)));
-    connect(mediaPlayer, SIGNAL(repeatChanged(int)),              &this->mediaSignalSender, SIGNAL(repeatChanged(int)));
-    connect(mediaPlayer, SIGNAL(currentRepeatChanged(int)),       &this->mediaSignalSender, SIGNAL(currentRepeatChanged(int)));
-    connect(mediaPlayer, SIGNAL(startPositionChanged(qint64)),    &this->mediaSignalSender, SIGNAL(startPositionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(stopPositionChanged(qint64)),     &this->mediaSignalSender, SIGNAL(stopPositionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(positionChanged(qint64)),         &this->mediaSignalSender, SIGNAL(positionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(brightnessChanged(int)),          &this->mediaSignalSender, SIGNAL(brightnessChanged(int)));
-    connect(mediaPlayer, SIGNAL(contrastChanged(int)),            &this->mediaSignalSender, SIGNAL(contrastChanged(int)));
-    connect(mediaPlayer, SIGNAL(saturationChanged(int)),          &this->mediaSignalSender, SIGNAL(saturationChanged(int)));
+    connect(mediaPlayer, SIGNAL(paused(bool)),                    this, SIGNAL(paused(bool)));
+    connect(mediaPlayer, SIGNAL(started()),                       this, SIGNAL(started()));
+    connect(mediaPlayer, SIGNAL(stopped()),                       this, SIGNAL(stopped()));
+    connect(mediaPlayer, SIGNAL(speedChanged(qreal)),             this, SIGNAL(speedChanged(qreal)));
+    connect(mediaPlayer, SIGNAL(repeatChanged(int)),              this, SIGNAL(repeatChanged(int)));
+    connect(mediaPlayer, SIGNAL(currentRepeatChanged(int)),       this, SIGNAL(currentRepeatChanged(int)));
+    connect(mediaPlayer, SIGNAL(startPositionChanged(qint64)),    this, SIGNAL(startPositionChanged(qint64)));
+    connect(mediaPlayer, SIGNAL(stopPositionChanged(qint64)),     this, SIGNAL(stopPositionChanged(qint64)));
+    connect(mediaPlayer, SIGNAL(positionChanged(qint64)),         this, SIGNAL(positionChanged(qint64)));
+    connect(mediaPlayer, SIGNAL(brightnessChanged(int)),          this, SIGNAL(brightnessChanged(int)));
+    connect(mediaPlayer, SIGNAL(contrastChanged(int)),            this, SIGNAL(contrastChanged(int)));
+    connect(mediaPlayer, SIGNAL(saturationChanged(int)),          this, SIGNAL(saturationChanged(int)));
     connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
 #else
     connect(mediaPlayer, &AVPlayer::paused,               this, &QtAVMediaPlayerObject::paused);
