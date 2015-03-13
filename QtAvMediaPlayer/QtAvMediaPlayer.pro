@@ -56,3 +56,7 @@ OTHER_FILES += \
     metadata.json 
 
 DEPENDENCY_LIBRARIES = QtAV
+
+DISTFILES += \
+    qtav_destdir_patch.pri \
+    qtav_libdir_patch.pri

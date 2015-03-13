@@ -13,18 +13,6 @@ SUBDIRS += \
         QtAV \
         QtAvMediaPlayer
 
-QtAvMediaPlayer.depends=QtAV
-
-#LIBAV_DIR=../../third_party/libav-bin
-#message($$absolute_path($$LIBAV_DIR))
-
-#QtAV.LIBS += -L$$LIBAV_DIR/lib
-#QtAV.INCLUDEPATH += $$LIBAV_DIR/include
-#QtAV.config += static_ffmpeg
-
-
-QtAV.OUT_DIR = $$DESTDIR
-
 QtAvMediaPlayer.depends += QtAV
 
 OTHER_FILES += \
