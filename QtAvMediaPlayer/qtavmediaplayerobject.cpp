@@ -389,12 +389,6 @@ MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
     return metadata;
 }
 
-
-
-
-
-
-
 PluginObjectResult yasem::QtAVMediaPlayerObject::init()
 {
     STUB();
@@ -405,7 +399,6 @@ PluginObjectResult yasem::QtAVMediaPlayerObject::init()
     mediaPlayer->setInterruptTimeout(10000);
     mediaPlayer->setRenderer(videoWidget);
 
-#ifdef Q_OS_WIN
     //FIXME() << "Media player signals not connected under Windows!";
     // New signal/slot connection doesn't work under windows  because signal defines two times
     connect(mediaPlayer, SIGNAL(paused(bool)),                    this, SIGNAL(paused(bool)));
@@ -421,21 +414,6 @@ PluginObjectResult yasem::QtAVMediaPlayerObject::init()
     connect(mediaPlayer, SIGNAL(contrastChanged(int)),            this, SIGNAL(contrastChanged(int)));
     connect(mediaPlayer, SIGNAL(saturationChanged(int)),          this, SIGNAL(saturationChanged(int)));
     connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
-#else
-    connect(mediaPlayer, &AVPlayer::paused,               this, &QtAVMediaPlayerObject::paused);
-    connect(mediaPlayer, &AVPlayer::started,              this, &QtAVMediaPlayerObject::started);
-    connect(mediaPlayer, &AVPlayer::stopped,              this, &QtAVMediaPlayerObject::stopped);
-    connect(mediaPlayer, &AVPlayer::speedChanged,         this, &QtAVMediaPlayerObject::speedChanged);
-    connect(mediaPlayer, &AVPlayer::repeatChanged,        this, &QtAVMediaPlayerObject::repeatChanged);
-    connect(mediaPlayer, &AVPlayer::currentRepeatChanged, this, &QtAVMediaPlayerObject::currentRepeatChanged);
-    connect(mediaPlayer, &AVPlayer::startPositionChanged, this, &QtAVMediaPlayerObject::startPositionChanged);
-    connect(mediaPlayer, &AVPlayer::stopPositionChanged,  this, &QtAVMediaPlayerObject::stopPositionChanged);
-    connect(mediaPlayer, &AVPlayer::positionChanged,      this, &QtAVMediaPlayerObject::positionChanged);
-    connect(mediaPlayer, &AVPlayer::brightnessChanged,    this, &QtAVMediaPlayerObject::brightnessChanged);
-    connect(mediaPlayer, &AVPlayer::contrastChanged,      this, &QtAVMediaPlayerObject::contrastChanged);
-    connect(mediaPlayer, &AVPlayer::saturationChanged,    this, &QtAVMediaPlayerObject::saturationChanged);
-    connect(mediaPlayer, &AVPlayer::mediaStatusChanged,   this, &QtAVMediaPlayerObject::onMediaStatusChanged);
-#endif //Q_OS_WIN32
 
     return PLUGIN_OBJECT_RESULT_OK;
 }
