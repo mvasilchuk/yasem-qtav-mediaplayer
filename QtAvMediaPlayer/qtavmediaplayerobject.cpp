@@ -3,7 +3,6 @@
 #include "pluginmanager.h"
 #include "core.h"
 
-#include "QtAVWidgets/WidgetRenderer.h"
 #include "QtAV/AVPlayer.h"
 #include "QtAV/AudioOutput.h"
 #include "QtAV/QtAV_Global.h"
@@ -23,12 +22,11 @@ QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
     m_aspect_ratio(ASPECT_RATIO_16_9)
 {
     QtAV::setFFmpegLogHandler(NULL);
-    fullscreen(true);
+    setFullscreen(true);
 }
 
 QtAVMediaPlayerObject::~QtAVMediaPlayerObject()
 {
-
 }
 
 void QtAVMediaPlayerObject::customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -124,8 +122,8 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
     if(!processHooks(MediaPlayerPluginObject::BEFORE_PLAY)) return false;
 
     mediaPlayer->play(url);
-    videoWidget->show();
-    aspectRatio(m_aspect_ratio);
+    //videoWidget->show();
+    setAspectRatio(m_aspect_ratio);
 
     return processHooks(MediaPlayerPluginObject::AFTER_PLAY);
 }
@@ -155,12 +153,12 @@ bool QtAVMediaPlayerObject::mediaReset()
 
 void QtAVMediaPlayerObject::show()
 {
-    videoWidget->show();
+    //videoWidget->show();
 }
 
 void QtAVMediaPlayerObject::hide()
 {
-    videoWidget->hide();
+    //videoWidget->hide();
 }
 
 void QtAVMediaPlayerObject::rect(const QRect &rect)
@@ -168,13 +166,12 @@ void QtAVMediaPlayerObject::rect(const QRect &rect)
     videoWidget->setGeometry(rect);
 }
 
-QRect QtAVMediaPlayerObject::rect()
+QRect QtAVMediaPlayerObject::rect() const
 {
-    STUB();
     return videoWidget->geometry();
 }
 
-bool QtAVMediaPlayerObject::isVisible()
+bool QtAVMediaPlayerObject::isVisible() const
 {
     STUB();
     return videoWidget->isVisible();
@@ -191,7 +188,7 @@ bool QtAVMediaPlayerObject::state(MediaPlayingState state)
     return true;
 }
 
-void QtAVMediaPlayerObject::aspectRatio(AspectRatio ratio)
+void QtAVMediaPlayerObject::setAspectRatio(AspectRatio ratio)
 {
     STUB() << ratio;
 
@@ -258,7 +255,7 @@ void QtAVMediaPlayerObject::aspectRatio(AspectRatio ratio)
     renderer->setOutAspectRatio(a_ratio);
 }
 
-AspectRatio QtAVMediaPlayerObject::aspectRatio()
+AspectRatio QtAVMediaPlayerObject::getAspectRatio()
 {
     return (AspectRatio)m_aspect_ratio;
 }
@@ -268,52 +265,65 @@ void QtAVMediaPlayerObject::move(int x, int y)
     videoWidget->move(x, y);
 }
 
-void QtAVMediaPlayerObject::raise()
-{
-    videoWidget->raise();
-    //resize();
-}
-
-int QtAVMediaPlayerObject::audioPID()
+int QtAVMediaPlayerObject::getAudioPID() const
 {
     STUB();
     return mediaPlayer->currentAudioStream();
 }
 
-int QtAVMediaPlayerObject::bufferLoad()
+void QtAVMediaPlayerObject::setAudioPID(int pid)
+{
+    STUB() << pid;
+    mediaPlayer->setAudioStream(pid);
+}
+
+int QtAVMediaPlayerObject::bufferLoad() const
 {
     STUB();
     return 100;
 }
 
-qint64 QtAVMediaPlayerObject::position()
+qint64 QtAVMediaPlayerObject::getPosition() const
 {
     qint64 pos = mediaPlayer->position();
     return pos;
 }
 
-qint64 QtAVMediaPlayerObject::duration()
+qint64 QtAVMediaPlayerObject::getDuration() const
 {
     STUB();
     qint64 duration = mediaPlayer->duration();
     return duration;
 }
 
-int QtAVMediaPlayerObject::getBrightness()
+int QtAVMediaPlayerObject::getBrightness() const
 {
     return mediaPlayer->brightness();
 }
 
-int QtAVMediaPlayerObject::getContrast()
+void yasem::QtAVMediaPlayerObject::setBrightness(int brightness)
+{
+    mediaPlayer->setBrightness(brightness);
+}
+
+int QtAVMediaPlayerObject::getContrast() const
 {
     return mediaPlayer->contrast();
 }
 
-
-void QtAVMediaPlayerObject::audioPID(int pid)
+void yasem::QtAVMediaPlayerObject::setContrast(int contrast)
 {
-    STUB() << pid;
-    mediaPlayer->setAudioStream(pid);
+    mediaPlayer->setContrast(contrast);
+}
+
+int yasem::QtAVMediaPlayerObject::getSaturation() const
+{
+    return mediaPlayer->saturation();
+}
+
+void yasem::QtAVMediaPlayerObject::setSaturation(int saturation)
+{
+    mediaPlayer->setSaturation(saturation);
 }
 
 QList<AudioLangInfo> QtAVMediaPlayerObject::getAudioLanguages()
@@ -332,32 +342,32 @@ void QtAVMediaPlayerObject::setAudioLanguage(int index)
     mediaPlayer->setAudioStream(index);
 }
 
-int QtAVMediaPlayerObject::loop()
+int QtAVMediaPlayerObject::getLoop() const
 {
     return mediaPlayer->repeat();
 }
 
-void QtAVMediaPlayerObject::loop(int loop)
+void QtAVMediaPlayerObject::setLoop(int loop)
 {
     mediaPlayer->setRepeat(loop);
 }
 
-bool QtAVMediaPlayerObject::mute()
+bool QtAVMediaPlayerObject::isMute() const
 {
     return mediaPlayer->isMute();
 }
 
-void QtAVMediaPlayerObject::mute(bool value)
+void QtAVMediaPlayerObject::setMute(bool value)
 {
     mediaPlayer->setMute(value);
 }
 
-void QtAVMediaPlayerObject::position(qint64 pos)
+void QtAVMediaPlayerObject::setPosition(qint64 pos)
 {
     mediaPlayer->setPosition(pos);
 }
 
-int QtAVMediaPlayerObject::volume()
+int QtAVMediaPlayerObject::getVolume() const
 {
     STUB();
     AudioOutput* audio = mediaPlayer->audio();
@@ -368,7 +378,7 @@ int QtAVMediaPlayerObject::volume()
     return 100;
 }
 
-void QtAVMediaPlayerObject::volume(int vol)
+void QtAVMediaPlayerObject::setVolume(int vol)
 {
     STUB() << vol;
     AudioOutput* audio = mediaPlayer->audio();
@@ -389,15 +399,26 @@ MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
     return metadata;
 }
 
-PluginObjectResult yasem::QtAVMediaPlayerObject::init()
+PluginObjectResult QtAVMediaPlayerObject::init()
 {
     STUB();
     gui = dynamic_cast<GuiPluginObject*>(PluginManager::instance()->getByRole(ROLE_GUI));
-    videoWidget = new QtAV::WidgetRenderer();
+    videoWidget = new WidgetRenderer();
+
+    videoWidget->setAttribute(Qt::WA_InputMethodTransparent);
+    videoWidget->setAttribute(Qt::WA_PaintOnScreen, true);
+    videoWidget->setAutoFillBackground(false);
+    videoWidget->setUpdatesEnabled(false); // No need to render video on window
+    videoWidget->setVisible(false);
+
+    disconnect(videoWidget, SIGNAL(imageReady()), 0, 0);
+    connect(videoWidget, &WidgetRenderer::imageReady, this, &MediaPlayerPluginObject::rendered);
+
     mediaPlayer = new QtAV::AVPlayer();
     mediaPlayer->setAsyncLoad(true);
     mediaPlayer->setInterruptTimeout(10000);
     mediaPlayer->setRenderer(videoWidget);
+    mediaPlayer->setPriority(QVector<VideoDecoderId>() << QtAV::VideoDecoderId_FFmpeg);
 
     //FIXME() << "Media player signals not connected under Windows!";
     // New signal/slot connection doesn't work under windows  because signal defines two times
@@ -418,7 +439,26 @@ PluginObjectResult yasem::QtAVMediaPlayerObject::init()
     return PLUGIN_OBJECT_RESULT_OK;
 }
 
-PluginObjectResult yasem::QtAVMediaPlayerObject::deinit()
+PluginObjectResult QtAVMediaPlayerObject::deinit()
 {
     return PLUGIN_OBJECT_RESULT_OK;
+}
+
+QPixmap& QtAVMediaPlayerObject::render()
+{
+    videoWidget->render(&m_last_frame);
+    return m_last_frame;
+}
+
+
+QPoint QtAVMediaPlayerObject::getWidgetPos() const
+{
+    return videoWidget->pos();
+}
+
+
+void QtAVMediaPlayerObject::resize()
+{
+    MediaPlayerPluginObject::resize();
+    m_last_frame = QPixmap(videoWidget->size());
 }

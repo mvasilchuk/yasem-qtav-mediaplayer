@@ -4,10 +4,11 @@
 #include "macros.h"
 #include "mediaplayerpluginobject.h"
 
-#include "QtAVWidgets/WidgetRenderer.h"
 #include "QtAV/AVPlayer.h"
+#include "QtAVWidgets/WidgetRenderer.h"
 
 #include <QRect>
+#include <QPainter>
 
 namespace yasem {
 
@@ -32,34 +33,39 @@ public:
     void show();
     void hide();
     void rect(const QRect &rect);
-    QRect rect();
-    bool isVisible();
+    QRect rect() const;
+    bool isVisible() const;
     MediaPlayingState state();
     bool state(MediaPlayingState state);
-    void aspectRatio(AspectRatio ratio);
-    AspectRatio aspectRatio();
+    void setAspectRatio(AspectRatio ratio);
+    AspectRatio getAspectRatio();
     void move(int x, int y);
-    void raise();
 
-    int audioPID();
-    int bufferLoad();
-    void position(qint64 pos);
-    qint64 position();
-    qint64 duration();
+    int getAudioPID() const;
+    void setAudioPID(int pid);
 
-    int getBrightness();
-    int getContrast();
+    int bufferLoad() const;
+    void setPosition(qint64 pos);
+    qint64 getPosition() const;
+    qint64 getDuration() const;
 
-    // MediaPlayerPlugin interface
+    int getBrightness() const;
+    int getContrast() const;
 
-    void audioPID(int pid);
-    int loop();
-    void loop(int loop);
-    bool mute();
-    void mute(bool value);
+    void setBrightness(int brightness);
+    void setContrast(int contrast);
 
-    int volume();
-    void volume(int vol);
+    void setSaturation(int saturation);
+    int getSaturation() const;
+
+
+    int getLoop() const;
+    void setLoop(int loop);
+    bool isMute() const;
+    void setMute(bool value);
+
+    int getVolume() const;
+    void setVolume(int vol);
 
     MediaMetadata getMediaMetadata();
 
@@ -68,6 +74,7 @@ protected:
     QtAV::AVPlayer* mediaPlayer;
     AspectRatio m_aspect_ratio;
     GuiPluginObject* gui;
+    QPixmap m_last_frame;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
 
@@ -81,6 +88,11 @@ protected slots:
 public:
     PluginObjectResult init();
     PluginObjectResult deinit();
+
+    QPixmap& render();
+    QPoint getWidgetPos() const;
+
+    void resize();
 };
 
 }
