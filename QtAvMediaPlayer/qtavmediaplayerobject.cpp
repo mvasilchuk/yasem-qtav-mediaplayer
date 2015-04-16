@@ -153,12 +153,12 @@ bool QtAVMediaPlayerObject::mediaReset()
 
 void QtAVMediaPlayerObject::show()
 {
-    //videoWidget->show();
+    videoWidget->show();
 }
 
 void QtAVMediaPlayerObject::hide()
 {
-    //videoWidget->hide();
+    videoWidget->hide();
 }
 
 void QtAVMediaPlayerObject::rect(const QRect &rect)
@@ -406,6 +406,8 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     videoWidget = new WidgetRenderer();
 
     videoWidget->setAttribute(Qt::WA_InputMethodTransparent);
+
+#ifdef USE_REAL_TRANSPARENCY
     videoWidget->setAttribute(Qt::WA_PaintOnScreen, true);
     videoWidget->setAutoFillBackground(false);
     videoWidget->setUpdatesEnabled(false); // No need to render video on window
@@ -413,6 +415,11 @@ PluginObjectResult QtAVMediaPlayerObject::init()
 
     disconnect(videoWidget, SIGNAL(imageReady()), 0, 0);
     connect(videoWidget, SIGNAL(imageReady), this, SIGNAL(rendered));
+#else
+    widget()->setVisible(true);
+#endif //USE_REAL_TRANSPARENCY
+
+
 
     mediaPlayer = new QtAV::AVPlayer();
     mediaPlayer->setAsyncLoad(true);
