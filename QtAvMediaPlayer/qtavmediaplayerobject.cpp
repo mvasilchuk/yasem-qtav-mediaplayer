@@ -412,7 +412,7 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     videoWidget->setVisible(false);
 
     disconnect(videoWidget, SIGNAL(imageReady()), 0, 0);
-    connect(videoWidget, &WidgetRenderer::imageReady, this, &MediaPlayerPluginObject::rendered);
+    connect(videoWidget, SIGNAL(imageReady), this, SIGNAL(rendered));
 
     mediaPlayer = new QtAV::AVPlayer();
     mediaPlayer->setAsyncLoad(true);
