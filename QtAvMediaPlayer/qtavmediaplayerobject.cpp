@@ -405,7 +405,7 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     gui = dynamic_cast<GuiPluginObject*>(PluginManager::instance()->getByRole(ROLE_GUI));
     videoWidget = new WidgetRenderer();
 
-    videoWidget->setAttribute(Qt::WA_InputMethodTransparent);
+    videoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 
 #ifdef USE_REAL_TRANSPARENCY
     videoWidget->setAttribute(Qt::WA_PaintOnScreen, true);
