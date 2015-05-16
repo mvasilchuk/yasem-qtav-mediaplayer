@@ -2,12 +2,14 @@
 #include "guipluginobject.h"
 #include "pluginmanager.h"
 #include "core.h"
+#include "yasemsettings.h"
 
 #include "QtAV/AVPlayer.h"
 #include "QtAV/AudioOutput.h"
 #include "QtAV/QtAV_Global.h"
 #include <QtAV/AudioFormat.h>
 #include <QtAV/AudioOutput.h>
+#include <QtAV/VideoRendererTypes.h>
 
 #include <QApplication>
 #include <QList>
@@ -19,10 +21,14 @@ using namespace QtAV;
 
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
     MediaPlayerPluginObject(plugin),
-    m_aspect_ratio(ASPECT_RATIO_16_9)
+    m_aspect_ratio(ASPECT_RATIO_16_9),
+    m_config_file("qtav-player"),
+    m_yasem_settings(Core::instance()->yasem_settings()),
+    m_settings(Core::instance()->settings(m_config_file))
 {
     QtAV::setFFmpegLogHandler(NULL);
     setFullscreen(true);
+    initSettings();
 }
 
 QtAVMediaPlayerObject::~QtAVMediaPlayerObject()
@@ -52,6 +58,44 @@ void QtAVMediaPlayerObject::customMessageHandler(QtMsgType type, const QMessageL
     //outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     //QTextStream ts(&outFile);
     //ts << txt << endl;
+}
+
+void QtAVMediaPlayerObject::initSettings()
+{
+    m_qtav_settings = new ConfigTreeGroup(m_config_file, "qtav", tr("QtAV"));
+    ConfigTreeGroup* qtav_video = new ConfigTreeGroup("video", tr("Video settings"));
+    ConfigTreeGroup* qtav_audio = new ConfigTreeGroup("audio", tr("Audio settings"));
+
+    ConfigItem* video_output = new ConfigItem("output", tr("Video output"), "", ConfigItem::LIST);
+    for(const std::string &name: VideoRendererFactory::registeredNames())
+    {
+        QString s_name = QString::fromStdString(name);
+        video_output->options().insert(s_name, s_name);
+    }
+    qtav_video->addItem(video_output);
+
+    QString default_decoder_name = QString::fromStdString(VideoDecoderFactory::name(QtAV::VideoDecoderId_FFmpeg));
+    ConfigItem* video_decoder_priority = new ConfigItem("decoder", tr("Decoder"), "", ConfigItem::LIST);
+    for(const std::string &name: VideoDecoderFactory::registeredNames())
+    {
+        const QString s_name = QString::fromStdString(name);
+        QString title = s_name;
+        if(title == default_decoder_name)
+            title.append(tr(" (default)"));
+        video_decoder_priority->options().insert(s_name, title);
+    }
+    qtav_video->addItem(video_decoder_priority);
+    connect(video_decoder_priority, &ConfigItem::saved, [=]() {
+        QString decoder = video_decoder_priority->getValue().toString();
+        DEBUG() << "setting a new decoder" << decoder;
+        mediaPlayer->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder.toStdString()));
+    });
+
+    m_qtav_settings->addItem(qtav_video);
+    m_qtav_settings->addItem(qtav_audio);
+
+    m_yasem_settings->addConfigGroup(m_qtav_settings);
+    m_yasem_settings->load(m_qtav_settings);
 }
 
 void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
@@ -419,13 +463,27 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     widget()->setVisible(true);
 #endif //USE_REAL_TRANSPARENCY
 
-
-
     mediaPlayer = new QtAV::AVPlayer();
     mediaPlayer->setAsyncLoad(true);
     mediaPlayer->setInterruptTimeout(10000);
     mediaPlayer->setRenderer(videoWidget);
-    mediaPlayer->setPriority(QVector<VideoDecoderId>() << QtAV::VideoDecoderId_FFmpeg);
+
+    ConfigItem* decoder = m_qtav_settings->findItemByPath("video/decoder");
+    QString decoder_name = decoder->value().toString();
+    if(decoder_name.isEmpty())
+    {
+        decoder->setValue(decoder->getDefaultValue());
+        m_yasem_settings->save(static_cast<ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
+    }
+    else
+    {
+        mediaPlayer->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder_name.toStdString()));
+    }
+
+    /*
+    QString current_renderer = QString::fromStdString(VideoRendererFactory::name(mediaPlayer->renderer()->id()));
+    m_qtav_settings->findItemByPath("video/output")->setValue(current_renderer);
+    */
 
     //FIXME() << "Media player signals not connected under Windows!";
     // New signal/slot connection doesn't work under windows  because signal defines two times

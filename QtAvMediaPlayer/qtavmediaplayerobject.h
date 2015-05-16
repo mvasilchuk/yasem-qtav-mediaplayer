@@ -10,9 +10,12 @@
 #include <QRect>
 #include <QPainter>
 
+class QSettings;
+
 namespace yasem {
 
 class GuiPluginObject;
+class ConfigTreeGroup;
 
 class QtAVMediaPlayerObject: public MediaPlayerPluginObject
 {
@@ -75,8 +78,13 @@ protected:
     AspectRatio m_aspect_ratio;
     GuiPluginObject* gui;
     QPixmap m_last_frame;
+    QString m_config_file;
+    YasemSettings* m_yasem_settings;
+    QSettings* m_settings;
+    ConfigTreeGroup* m_qtav_settings;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
+    void initSettings();
 
 public slots:
     QList<AudioLangInfo> getAudioLanguages();
