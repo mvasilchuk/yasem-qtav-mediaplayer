@@ -21,7 +21,7 @@ using namespace QtAV;
 
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
     MediaPlayerPluginObject(plugin),
-    m_aspect_ratio(ASPECT_RATIO_16_9),
+    m_aspect_ratio(ASPECT_RATIO_AUTO),
     m_config_file("qtav-player"),
     m_yasem_settings(Core::instance()->yasem_settings()),
     m_settings(Core::instance()->settings(m_config_file))
@@ -66,23 +66,27 @@ void QtAVMediaPlayerObject::initSettings()
     ConfigTreeGroup* qtav_video = new ConfigTreeGroup("video", tr("Video settings"));
     ConfigTreeGroup* qtav_audio = new ConfigTreeGroup("audio", tr("Audio settings"));
 
-    ConfigItem* video_output = new ConfigItem("output", tr("Video output"), "", ConfigItem::LIST);
+    /*QString default_video_output = QString::fromStdString(VideoRendererFactory::name(QtAV::VideoRendererId_Widget));
+    ConfigItem* video_output = new ConfigItem("output", tr("Video output"), default_video_output, ConfigItem::LIST);
     for(const std::string &name: VideoRendererFactory::registeredNames())
     {
         QString s_name = QString::fromStdString(name);
-        video_output->options().insert(s_name, s_name);
+        QString title = s_name;
+        if(title == default_video_output)
+            title.append(tr(" (default)"));
+        video_output->options().insert(s_name, title);
     }
-    qtav_video->addItem(video_output);
+    qtav_video->addItem(video_output);*/
 
     QString default_decoder_name = QString::fromStdString(VideoDecoderFactory::name(QtAV::VideoDecoderId_FFmpeg));
-    ConfigItem* video_decoder_priority = new ConfigItem("decoder", tr("Decoder"), "", ConfigItem::LIST);
+    ListConfigItem* video_decoder_priority = new ListConfigItem("decoder", tr("Decoder"), default_decoder_name);
     for(const std::string &name: VideoDecoderFactory::registeredNames())
     {
         const QString s_name = QString::fromStdString(name);
         QString title = s_name;
         if(title == default_decoder_name)
             title.append(tr(" (default)"));
-        video_decoder_priority->options().insert(s_name, title);
+        video_decoder_priority->options().insert(title, s_name);
     }
     qtav_video->addItem(video_decoder_priority);
     connect(video_decoder_priority, &ConfigItem::saved, [=]() {
@@ -95,7 +99,8 @@ void QtAVMediaPlayerObject::initSettings()
     m_qtav_settings->addItem(qtav_audio);
 
     m_yasem_settings->addConfigGroup(m_qtav_settings);
-    m_yasem_settings->load(m_qtav_settings);
+
+    m_yasem_settings->load();
 }
 
 void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
@@ -166,6 +171,7 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
     if(!processHooks(MediaPlayerPluginObject::BEFORE_PLAY)) return false;
 
     mediaPlayer->play(url);
+    m_aspect_ratio = (AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
     //videoWidget->show();
     setAspectRatio(m_aspect_ratio);
 
@@ -447,6 +453,19 @@ PluginObjectResult QtAVMediaPlayerObject::init()
 {
     STUB();
     gui = dynamic_cast<GuiPluginObject*>(PluginManager::instance()->getByRole(ROLE_GUI));
+
+    /*ConfigItem* output = m_qtav_settings->findItemByPath("video/output");
+    QString output_name = output->value().toString();
+    if(output_name.isEmpty())
+    {
+        output->setValue(output->getDefaultValue());
+        m_yasem_settings->save(static_cast<ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
+    }
+    else
+    {
+        videoWidget = VideoRendererFactory::create(VideoRendererFactory::id(output_name.toStdString()));
+    }*/
+
     videoWidget = new WidgetRenderer();
 
     videoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
