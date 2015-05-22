@@ -466,7 +466,7 @@ PluginObjectResult QtAVMediaPlayerObject::init()
         videoWidget = VideoRendererFactory::create(VideoRendererFactory::id(output_name.toStdString()));
     }*/
 
-    videoWidget = new WidgetRenderer();
+    videoWidget = new OpenGLWidgetRenderer();
 
     videoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
 

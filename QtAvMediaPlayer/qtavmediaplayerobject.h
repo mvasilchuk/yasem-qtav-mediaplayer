@@ -5,7 +5,7 @@
 #include "mediaplayerpluginobject.h"
 
 #include "QtAV/AVPlayer.h"
-#include "QtAVWidgets/WidgetRenderer.h"
+#include "QtAVWidgets/OpenGLWidgetRenderer.h"
 
 #include <QRect>
 #include <QPainter>
@@ -73,7 +73,7 @@ public:
     MediaMetadata getMediaMetadata();
 
 protected:
-    QtAV::WidgetRenderer* videoWidget;
+    QtAV::OpenGLWidgetRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
     AspectRatio m_aspect_ratio;
     GuiPluginObject* gui;
