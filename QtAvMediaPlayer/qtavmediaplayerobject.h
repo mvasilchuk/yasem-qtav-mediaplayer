@@ -5,10 +5,10 @@
 #include "mediaplayerpluginobject.h"
 
 #include "QtAV/AVPlayer.h"
-#include "QtAVWidgets/OpenGLWidgetRenderer.h"
 
 #include <QRect>
 #include <QPainter>
+#include <QOpenGLWidget>
 
 class QSettings;
 
@@ -27,7 +27,7 @@ public:
     void parent(QWidget *parent);
     QWidget *parent();
     void widget(QWidget *videoWidget);
-    QWidget *widget();
+    QWidget *widget() const;
     bool mediaPlay(const QString &url);
     bool mediaContinue();
     bool mediaPause();
@@ -73,7 +73,7 @@ public:
     MediaMetadata getMediaMetadata();
 
 protected:
-    QtAV::OpenGLWidgetRenderer* videoWidget;
+    QtAV::VideoRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
     AspectRatio m_aspect_ratio;
     GuiPluginObject* gui;
@@ -85,6 +85,8 @@ protected:
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
     void initSettings();
+    QOpenGLWidget* openGlWidget() const;
+
 
 public slots:
     QList<AudioLangInfo> getAudioLanguages();

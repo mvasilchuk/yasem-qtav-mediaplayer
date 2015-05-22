@@ -10,6 +10,8 @@
 #include <QtAV/AudioFormat.h>
 #include <QtAV/AudioOutput.h>
 #include <QtAV/VideoRendererTypes.h>
+#include "QtAVWidgets/OpenGLWidgetRenderer.h"
+#include <QtAVWidgets/WidgetRenderer.h>
 
 #include <QApplication>
 #include <QList>
@@ -103,6 +105,16 @@ void QtAVMediaPlayerObject::initSettings()
     m_yasem_settings->load();
 }
 
+/**
+ * @brief QtAVMediaPlayerObject::openGlWidget
+ * Only to check if OpenGL enabled!
+ * @return
+ */
+QOpenGLWidget *QtAVMediaPlayerObject::openGlWidget() const
+{
+    return dynamic_cast<QOpenGLWidget*>(videoWidget);
+}
+
 void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
 {
     switch(status)
@@ -148,12 +160,12 @@ void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
 
 void QtAVMediaPlayerObject::parent(QWidget *parent)
 {
-    videoWidget->setParent(parent);
+    widget()->setParent(parent);
 }
 
 QWidget *QtAVMediaPlayerObject::parent()
 {
-    return videoWidget->parentWidget();
+    return widget()->parentWidget();
 }
 
 void QtAVMediaPlayerObject::widget(QWidget *videoWidget)
@@ -161,9 +173,11 @@ void QtAVMediaPlayerObject::widget(QWidget *videoWidget)
     //this->videoWidget = videoWidget;
 }
 
-QWidget *QtAVMediaPlayerObject::widget()
+QWidget *QtAVMediaPlayerObject::widget() const
 {
-    return this->videoWidget;
+    QWidget* widget = dynamic_cast<QWidget*>(this->videoWidget);
+    Q_ASSERT(widget);
+    return widget;
 }
 
 bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
@@ -203,28 +217,28 @@ bool QtAVMediaPlayerObject::mediaReset()
 
 void QtAVMediaPlayerObject::show()
 {
-    videoWidget->show();
+    widget()->show();
 }
 
 void QtAVMediaPlayerObject::hide()
 {
-    videoWidget->hide();
+    widget()->hide();
 }
 
 void QtAVMediaPlayerObject::rect(const QRect &rect)
 {
-    videoWidget->setGeometry(rect);
+    widget()->setGeometry(rect);
 }
 
 QRect QtAVMediaPlayerObject::rect() const
 {
-    return videoWidget->geometry();
+    return widget()->geometry();
 }
 
 bool QtAVMediaPlayerObject::isVisible() const
 {
     STUB();
-    return videoWidget->isVisible();
+    return widget()->isVisible();
 }
 
 MediaPlayingState QtAVMediaPlayerObject::state()
@@ -312,7 +326,7 @@ AspectRatio QtAVMediaPlayerObject::getAspectRatio()
 
 void QtAVMediaPlayerObject::move(int x, int y)
 {
-    videoWidget->move(x, y);
+    widget()->move(x, y);
 }
 
 int QtAVMediaPlayerObject::getAudioPID() const
@@ -467,8 +481,16 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     }*/
 
     videoWidget = new OpenGLWidgetRenderer();
+    widget()->show();
+    QPair<int,int> opengl_version = openGlWidget()->context()->format().version();
+    if(!openGlWidget()->isValid() || opengl_version.first < 2) // if version is 1.1 it's probably a VirtualBox or other virtualization software
+    {
+        WARN() << "Can't instantinate OpenGL renderer. Falling back to WidgetRenderer";
+        delete videoWidget;
+        videoWidget = new WidgetRenderer();
+    }
 
-    videoWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
+    widget()->setAttribute(Qt::WA_TransparentForMouseEvents);
 
 #ifdef USE_REAL_TRANSPARENCY
     videoWidget->setAttribute(Qt::WA_PaintOnScreen, true);
@@ -478,8 +500,6 @@ PluginObjectResult QtAVMediaPlayerObject::init()
 
     disconnect(videoWidget, SIGNAL(imageReady()), 0, 0);
     connect(videoWidget, SIGNAL(imageReady), this, SIGNAL(rendered));
-#else
-    widget()->setVisible(true);
 #endif //USE_REAL_TRANSPARENCY
 
     mediaPlayer = new QtAV::AVPlayer();
@@ -530,19 +550,19 @@ PluginObjectResult QtAVMediaPlayerObject::deinit()
 
 QPixmap& QtAVMediaPlayerObject::render()
 {
-    videoWidget->render(&m_last_frame);
+    widget()->render(&m_last_frame);
     return m_last_frame;
 }
 
 
 QPoint QtAVMediaPlayerObject::getWidgetPos() const
 {
-    return videoWidget->pos();
+    return widget()->pos();
 }
 
 
 void QtAVMediaPlayerObject::resize()
 {
     MediaPlayerPluginObject::resize();
-    m_last_frame = QPixmap(videoWidget->size());
+    m_last_frame = QPixmap(widget()->size());
 }
