@@ -28,6 +28,7 @@ QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
     m_yasem_settings(Core::instance()->yasem_settings()),
     m_settings(Core::instance()->settings(m_config_file))
 {
+    m_support_opengl = true;
     QtAV::setFFmpegLogHandler(NULL);
     setFullscreen(true);
     initSettings();
@@ -100,8 +101,7 @@ void QtAVMediaPlayerObject::initSettings()
     m_qtav_settings->addItem(qtav_video);
     m_qtav_settings->addItem(qtav_audio);
 
-    m_yasem_settings->addConfigGroup(m_qtav_settings);
-
+    m_yasem_settings->findItem(YasemSettings::SETTINGS_GROUP_PLUGINS)->addItem(m_qtav_settings);
     m_yasem_settings->load();
 }
 
