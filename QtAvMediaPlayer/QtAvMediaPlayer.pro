@@ -32,7 +32,8 @@ HEADERS +=\
     qtavmediaplayer_global.h \
     qtavmediaplayerplugin.h \
     qtavmediaplayerobject.h \
-    $${CORE_ROOT_DIR}/browserpluginobject.h
+    $${CORE_ROOT_DIR}/browserpluginobject.h \
+    $${CORE_ROOT_DIR}/guipluginobject.h
 
 unix {
     target.path = /usr/lib
@@ -48,8 +49,9 @@ unix:!mac {
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_DIR -lQt5AV -lQt5AVWidgets
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_DIR -lQt5AVd -lQt5AVWidgetsd
 else:unix: {
-    greaterThan(QT_MINOR_VERSION, 3): LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
-    else: LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
+    #greaterThan(QT_MINOR_VERSION, 3): LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
+    #else:
+    LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
 }
 
 OTHER_FILES += \
