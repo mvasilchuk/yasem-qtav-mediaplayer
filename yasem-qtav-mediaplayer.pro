@@ -17,4 +17,5 @@ QtAvMediaPlayer.depends += QtAV
 
 OTHER_FILES += \
     LICENSE \
-    README.md
+    README.md \
+    .make.conf
