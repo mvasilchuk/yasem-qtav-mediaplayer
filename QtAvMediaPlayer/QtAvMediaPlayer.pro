@@ -46,8 +46,6 @@ unix:!mac {
   QMAKE_RPATH=
 }
 
-message($$QT_MINOR_VERSION)
-
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_DIR -lQt5AV -lQt5AVWidgets
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_DIR -lQt5AVd -lQt5AVWidgetsd
 else:unix: {
