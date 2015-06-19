@@ -76,11 +76,7 @@ protected:
     QtAV::VideoRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
     AspectRatio m_aspect_ratio;
-    GuiPluginObject* gui;
-    QPixmap m_last_frame;
-    QString m_config_file;
     YasemSettings* m_yasem_settings;
-    QSettings* m_settings;
     ConfigTreeGroup* m_qtav_settings;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
@@ -99,7 +95,6 @@ public:
     PluginObjectResult init();
     PluginObjectResult deinit();
 
-    QPixmap& render();
     QPoint getWidgetPos() const;
 
     void resize();

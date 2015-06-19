@@ -6,7 +6,7 @@ using namespace yasem;
 QtAvMediaPlayerPlugin::QtAvMediaPlayerPlugin(QObject* parent):
     Plugin(parent)
 {
-
+    setMultithreading(false);
 }
 
 QtAvMediaPlayerPlugin::~QtAvMediaPlayerPlugin()

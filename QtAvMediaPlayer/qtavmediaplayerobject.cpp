@@ -24,9 +24,7 @@ using namespace QtAV;
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
     MediaPlayerPluginObject(plugin),
     m_aspect_ratio(ASPECT_RATIO_AUTO),
-    m_config_file("qtav-player"),
-    m_yasem_settings(Core::instance()->yasem_settings()),
-    m_settings(Core::instance()->settings(m_config_file))
+    m_yasem_settings(Core::instance()->yasem_settings())
 {
     m_support_opengl = true;
     QtAV::setFFmpegLogHandler(NULL);
@@ -65,7 +63,7 @@ void QtAVMediaPlayerObject::customMessageHandler(QtMsgType type, const QMessageL
 
 void QtAVMediaPlayerObject::initSettings()
 {
-    m_qtav_settings = new ConfigTreeGroup(m_config_file, "qtav", tr("QtAV"));
+    m_qtav_settings = new ConfigTreeGroup("qtav-player", "qtav", tr("QtAV"));
     ConfigTreeGroup* qtav_video = new ConfigTreeGroup("video", tr("Video settings"));
     ConfigTreeGroup* qtav_audio = new ConfigTreeGroup("audio", tr("Audio settings"));
 
@@ -466,7 +464,6 @@ MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
 PluginObjectResult QtAVMediaPlayerObject::init()
 {
     STUB();
-    gui = dynamic_cast<GuiPluginObject*>(PluginManager::instance()->getByRole(ROLE_GUI));
 
     /*ConfigItem* output = m_qtav_settings->findItemByPath("video/output");
     QString output_name = output->value().toString();
@@ -482,13 +479,24 @@ PluginObjectResult QtAVMediaPlayerObject::init()
 
     videoWidget = new OpenGLWidgetRenderer();
     widget()->show();
-    QPair<int,int> opengl_version = openGlWidget()->context()->format().version();
-    if(!openGlWidget()->isValid() || opengl_version.first < 2) // if version is 1.1 it's probably a VirtualBox or other virtualization software
+    QOpenGLWidget* oglWidget = openGlWidget();
+    if(Core::instance()->getVM() != Core::VM_VIRTUAL_BOX && oglWidget != NULL)
     {
-        WARN() << "Can't instantinate OpenGL renderer. Falling back to WidgetRenderer";
+        QPair<int,int> opengl_version = oglWidget->context()->format().version();
+        if(!openGlWidget()->isValid() || opengl_version.first < 2) // if version is 1.1 it's probably a VirtualBox or other virtualization software
+        {
+            WARN() << "Can't instantinate OpenGL renderer. Falling back to WidgetRenderer";
+            delete videoWidget;
+            videoWidget = new WidgetRenderer();
+        }
+    }
+    else
+    {
+        WARN() << "OpenGL widget not created. Falling back to WidgetRenderer";
         delete videoWidget;
         videoWidget = new WidgetRenderer();
     }
+
 
     widget()->setAttribute(Qt::WA_TransparentForMouseEvents);
 
@@ -548,13 +556,6 @@ PluginObjectResult QtAVMediaPlayerObject::deinit()
     return PLUGIN_OBJECT_RESULT_OK;
 }
 
-QPixmap& QtAVMediaPlayerObject::render()
-{
-    widget()->render(&m_last_frame);
-    return m_last_frame;
-}
-
-
 QPoint QtAVMediaPlayerObject::getWidgetPos() const
 {
     return widget()->pos();
@@ -564,5 +565,4 @@ QPoint QtAVMediaPlayerObject::getWidgetPos() const
 void QtAVMediaPlayerObject::resize()
 {
     MediaPlayerPluginObject::resize();
-    m_last_frame = QPixmap(widget()->size());
 }
