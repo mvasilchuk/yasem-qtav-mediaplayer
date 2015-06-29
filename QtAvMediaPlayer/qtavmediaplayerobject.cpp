@@ -3,6 +3,7 @@
 #include "pluginmanager.h"
 #include "core.h"
 #include "yasemsettings.h"
+#include "configuration_items.h"
 
 #include "QtAV/AVPlayer.h"
 #include "QtAV/AudioOutput.h"
@@ -99,7 +100,7 @@ void QtAVMediaPlayerObject::initSettings()
     m_qtav_settings->addItem(qtav_video);
     m_qtav_settings->addItem(qtav_audio);
 
-    m_yasem_settings->findItem(YasemSettings::SETTINGS_GROUP_PLUGINS)->addItem(m_qtav_settings);
+    m_yasem_settings->findItem(SETTINGS_GROUP_PLUGINS)->addItem(m_qtav_settings);
     m_yasem_settings->load();
 }
 
