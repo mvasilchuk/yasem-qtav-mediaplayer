@@ -61,8 +61,11 @@ else:unix: {
         # I have no idea why, but sometimes gcc generates library names Qt5AV and Qt5AVWidgets,
         # but sometimes without 5 in the middle.
 
-        greaterThan(QT_MINOR_VERSION, 3): LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
-        else:LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
+        isEqual(QT_MAJOR_VERSION, 5):isEqual(QT_MINOR_VERSION, 4):lessThan(QT_PATCH_VERSION, 2) {
+            LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
+        } else {
+            LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
+        }
     }
 
 }
