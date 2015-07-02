@@ -42,32 +42,18 @@ unix:!mac {
   QMAKE_RPATH=
 }
 
-win32:CONFIG(release, debug|release): {
-    *-g++*: { #i686-w64-mingw32/4.9.1
-        # TODO: Add workarounds for different compilers
-        LIBS += -L$$OUT_DIR -lQtAV -lQtAVWidgets1
+isEqual(QT_MAJOR_VERSION, 5):isEqual(QT_MINOR_VERSION, 4):lessThan(QT_PATCH_VERSION, 2) {
+    win32:CONFIG(debug, debug|release): {
+        LIBS += -L$$OUT_DIR/libs -lQt5AVd -lQt5AVWidgetsd
     } else {
-        LIBS += -L$$OUT_DIR -lQt5AV1 -lQt5AVWidgets1
+        LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
     }
-}
-else:win32:CONFIG(debug, debug|release): {
-    LIBS += -L$$OUT_DIR -lQt5AVd -lQt5AVWidgetsd
-}
-else:unix: {
-    clang: {
+} else {
+    win32:CONFIG(debug, debug|release): {
+        LIBS += -L$$OUT_DIR/libs -lQtAVd -lQtAVWidgetsd
+    } else {
         LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
-    } else {
-        # gcc
-        # I have no idea why, but sometimes gcc generates library names Qt5AV and Qt5AVWidgets,
-        # but sometimes without 5 in the middle.
-
-        isEqual(QT_MAJOR_VERSION, 5):isEqual(QT_MINOR_VERSION, 4):lessThan(QT_PATCH_VERSION, 2) {
-            LIBS += -L$$OUT_DIR/libs -lQt5AV -lQt5AVWidgets
-        } else {
-            LIBS += -L$$OUT_DIR/libs -lQtAV -lQtAVWidgets
-        }
     }
-
 }
 
 OTHER_FILES += \
