@@ -14,7 +14,9 @@ class QTAVMEDIAPLAYERSHARED_EXPORT QtAvMediaPlayerPlugin: public Plugin
     Q_INTERFACES(yasem::Plugin)
 
     Q_CLASSINFO("author", "Maxim Vasilchuk")
-    Q_CLASSINFO("description", "LibAV media player for YASEM")
+    Q_CLASSINFO("description", "QtAV media player")
+    Q_CLASSINFO("version", MODULE_VERSION)
+    Q_CLASSINFO("revision", GIT_VERSION)
 public:
     explicit QtAvMediaPlayerPlugin(QObject* parent = NULL);
     virtual ~QtAvMediaPlayerPlugin();

@@ -22,18 +22,14 @@ INCLUDEPATH += \
 
 SOURCES += \
     qtavmediaplayerplugin.cpp \
-    qtavmediaplayerobject.cpp \
-    $${CORE_ROOT_DIR}/mediaplayerpluginobject.cpp
+    qtavmediaplayerobject.cpp
 
 HEADERS +=\
     ../QtAV/widgets/QtAVWidgets/WidgetRenderer.h \
     ../QtAV/src/QtAV/AVPlayer.h \
-    $${CORE_ROOT_DIR}/mediaplayerpluginobject.h \
     qtavmediaplayer_global.h \
     qtavmediaplayerplugin.h \
-    qtavmediaplayerobject.h \
-    $${CORE_ROOT_DIR}/browserpluginobject.h \
-    $${CORE_ROOT_DIR}/guipluginobject.h
+    qtavmediaplayerobject.h
 
 unix {
     target.path = /usr/lib
