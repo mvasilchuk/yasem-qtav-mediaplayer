@@ -14,14 +14,16 @@ class QSettings;
 
 namespace yasem {
 
+namespace SDK {
 class GuiPluginObject;
 class ConfigTreeGroup;
+}
 
-class QtAVMediaPlayerObject: public MediaPlayerPluginObject
+class QtAVMediaPlayerObject: public SDK::MediaPlayerPluginObject
 {
     Q_OBJECT
 public:
-    QtAVMediaPlayerObject(Plugin* plugin);
+    QtAVMediaPlayerObject(SDK::Plugin* plugin);
     virtual ~QtAVMediaPlayerObject();
 
     void parent(QWidget *parent);
@@ -38,10 +40,10 @@ public:
     void rect(const QRect &rect);
     QRect rect() const;
     bool isVisible() const;
-    MediaPlayingState state();
-    bool state(MediaPlayingState state);
-    void setAspectRatio(AspectRatio ratio);
-    AspectRatio getAspectRatio();
+    SDK::MediaPlayingState state();
+    bool state(SDK::MediaPlayingState state);
+    void setAspectRatio(SDK::AspectRatio ratio);
+    SDK::AspectRatio getAspectRatio();
     void move(int x, int y);
 
     int getAudioPID() const;
@@ -75,9 +77,9 @@ public:
 protected:
     QtAV::VideoRenderer* videoWidget;
     QtAV::AVPlayer* mediaPlayer;
-    AspectRatio m_aspect_ratio;
-    YasemSettings* m_yasem_settings;
-    ConfigTreeGroup* m_qtav_settings;
+    SDK::AspectRatio m_aspect_ratio;
+    SDK::YasemSettings* m_yasem_settings;
+    SDK::ConfigTreeGroup* m_qtav_settings;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
     void initSettings();
@@ -92,8 +94,8 @@ protected slots:
 
     // AbstractPluginObject interface
 public:
-    PluginObjectResult init();
-    PluginObjectResult deinit();
+    SDK::PluginObjectResult init();
+    SDK::PluginObjectResult deinit();
 
     QPoint getWidgetPos() const;
 

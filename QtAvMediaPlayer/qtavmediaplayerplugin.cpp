@@ -4,7 +4,7 @@
 using namespace yasem;
 
 QtAvMediaPlayerPlugin::QtAvMediaPlayerPlugin(QObject* parent):
-    Plugin(parent)
+    SDK::Plugin(parent)
 {
     setMultithreading(false);
 }
@@ -20,5 +20,5 @@ void yasem::QtAvMediaPlayerPlugin::register_dependencies()
 
 void yasem::QtAvMediaPlayerPlugin::register_roles()
 {
-    register_role(ROLE_MEDIA, new QtAVMediaPlayerObject(this));
+    register_role(SDK::ROLE_MEDIA, new QtAVMediaPlayerObject(this));
 }

@@ -22,10 +22,10 @@
 using namespace yasem;
 using namespace QtAV;
 
-QtAVMediaPlayerObject::QtAVMediaPlayerObject(Plugin* plugin):
-    MediaPlayerPluginObject(plugin),
-    m_aspect_ratio(ASPECT_RATIO_AUTO),
-    m_yasem_settings(Core::instance()->yasem_settings())
+QtAVMediaPlayerObject::QtAVMediaPlayerObject(SDK::Plugin* plugin):
+    SDK::MediaPlayerPluginObject(plugin),
+    m_aspect_ratio(SDK::ASPECT_RATIO_AUTO),
+    m_yasem_settings(SDK::Core::instance()->yasem_settings())
 {
     m_support_opengl = true;
     QtAV::setFFmpegLogHandler(NULL);
@@ -64,9 +64,9 @@ void QtAVMediaPlayerObject::customMessageHandler(QtMsgType type, const QMessageL
 
 void QtAVMediaPlayerObject::initSettings()
 {
-    m_qtav_settings = new ConfigTreeGroup("qtav-player", "qtav", tr("QtAV"));
-    ConfigTreeGroup* qtav_video = new ConfigTreeGroup("video", tr("Video settings"));
-    ConfigTreeGroup* qtav_audio = new ConfigTreeGroup("audio", tr("Audio settings"));
+    m_qtav_settings = new SDK::ConfigTreeGroup("qtav-player", "qtav", tr("QtAV"));
+    SDK::ConfigTreeGroup* qtav_video = new SDK::ConfigTreeGroup("video", tr("Video settings"));
+    SDK::ConfigTreeGroup* qtav_audio = new SDK::ConfigTreeGroup("audio", tr("Audio settings"));
 
     /*QString default_video_output = QString::fromStdString(VideoRendererFactory::name(QtAV::VideoRendererId_Widget));
     ConfigItem* video_output = new ConfigItem("output", tr("Video output"), default_video_output, ConfigItem::LIST);
@@ -81,7 +81,7 @@ void QtAVMediaPlayerObject::initSettings()
     qtav_video->addItem(video_output);*/
 
     QString default_decoder_name = QString::fromStdString(VideoDecoderFactory::name(QtAV::VideoDecoderId_FFmpeg));
-    ListConfigItem* video_decoder_priority = new ListConfigItem("decoder", tr("Decoder"), default_decoder_name);
+    SDK::ListConfigItem* video_decoder_priority = new SDK::ListConfigItem("decoder", tr("Decoder"), default_decoder_name);
     for(const std::string &name: VideoDecoderFactory::registeredNames())
     {
         const QString s_name = QString::fromStdString(name);
@@ -91,7 +91,7 @@ void QtAVMediaPlayerObject::initSettings()
         video_decoder_priority->options().insert(title, s_name);
     }
     qtav_video->addItem(video_decoder_priority);
-    connect(video_decoder_priority, &ConfigItem::saved, [=]() {
+    connect(video_decoder_priority, &SDK::ConfigItem::saved, [=]() {
         QString decoder = video_decoder_priority->getValue().toString();
         DEBUG() << "setting a new decoder" << decoder;
         mediaPlayer->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder.toStdString()));
@@ -119,35 +119,35 @@ void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
     switch(status)
     {
         case QtAV::MediaStatus::UnknownMediaStatus: {
-            emit statusChanged(MediaStatus::UnknownMediaStatus);
+            emit statusChanged(SDK::MediaStatus::UnknownMediaStatus);
             break;
         }
         case QtAV::MediaStatus::NoMedia: {
-            emit statusChanged(MediaStatus::NoMedia);
+            emit statusChanged(SDK::MediaStatus::NoMedia);
             break;
         }
         case QtAV::MediaStatus::LoadingMedia: {
-            emit statusChanged(MediaStatus::LoadingMedia);
+            emit statusChanged(SDK::MediaStatus::LoadingMedia);
             break;
         }
         case QtAV::MediaStatus::StalledMedia: {
-            emit statusChanged(MediaStatus::StalledMedia);
+            emit statusChanged(SDK::MediaStatus::StalledMedia);
             break;
         }
         case QtAV::MediaStatus::BufferingMedia: {
-            emit statusChanged(MediaStatus::BufferingMedia);
+            emit statusChanged(SDK::MediaStatus::BufferingMedia);
             break;
         }
         case QtAV::MediaStatus::BufferedMedia: {
-            emit statusChanged(MediaStatus::BufferedMedia);
+            emit statusChanged(SDK::MediaStatus::BufferedMedia);
             break;
         }
         case QtAV::MediaStatus::EndOfMedia: {
-            emit statusChanged(MediaStatus::EndOfMedia);
+            emit statusChanged(SDK::MediaStatus::EndOfMedia);
             break;
         }
         case QtAV::MediaStatus::InvalidMedia: {
-            emit statusChanged(MediaStatus::InvalidMedia);
+            emit statusChanged(SDK::MediaStatus::InvalidMedia);
             break;
         }
         default: {
@@ -184,7 +184,7 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
     if(!processHooks(MediaPlayerPluginObject::BEFORE_PLAY)) return false;
 
     mediaPlayer->play(url);
-    m_aspect_ratio = (AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
+    m_aspect_ratio = (SDK::AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
     //videoWidget->show();
     setAspectRatio(m_aspect_ratio);
 
@@ -240,18 +240,18 @@ bool QtAVMediaPlayerObject::isVisible() const
     return widget()->isVisible();
 }
 
-MediaPlayingState QtAVMediaPlayerObject::state()
+SDK::MediaPlayingState QtAVMediaPlayerObject::state()
 {
-    return PlayingState;
+    return SDK::PlayingState;
 }
 
-bool QtAVMediaPlayerObject::state(MediaPlayingState state)
+bool QtAVMediaPlayerObject::state(SDK::MediaPlayingState state)
 {
     STUB() << state;
     return true;
 }
 
-void QtAVMediaPlayerObject::setAspectRatio(AspectRatio ratio)
+void QtAVMediaPlayerObject::setAspectRatio(SDK::AspectRatio ratio)
 {
     STUB() << ratio;
 
@@ -259,7 +259,7 @@ void QtAVMediaPlayerObject::setAspectRatio(AspectRatio ratio)
 
     QtAV::VideoRenderer* renderer = mediaPlayer->renderer();
 
-    if(m_aspect_ratio == ASPECT_RATIO_AUTO)
+    if(m_aspect_ratio == SDK::ASPECT_RATIO_AUTO)
     {
         renderer->setOutAspectRatioMode(QtAV::VideoRenderer::VideoAspectRatio);
         return;
@@ -269,44 +269,44 @@ void QtAVMediaPlayerObject::setAspectRatio(AspectRatio ratio)
     float a_ratio = 1;
     switch(m_aspect_ratio)
     {
-        case ASPECT_RATIO_1_1: {
+        case SDK::ASPECT_RATIO_1_1: {
             a_ratio = 1;
             break;
         }
-        case ASPECT_RATIO_5_4: {
+        case SDK::ASPECT_RATIO_5_4: {
             a_ratio = 16.0 / 9;
             break;
         }
-        case ASPECT_RATIO_4_3: {
+        case SDK::ASPECT_RATIO_4_3: {
             a_ratio = 4.0 / 3;
             break;
         }
-        case ASPECT_RATIO_11_8: {
+        case SDK::ASPECT_RATIO_11_8: {
             a_ratio = 11.0 / 8;
             break;
         }
-        case ASPECT_RATIO_14_10: {
+        case SDK::ASPECT_RATIO_14_10: {
             a_ratio = 14.0 / 10;
             break;
         }
-        case ASPECT_RATIO_3_2: {
+        case SDK::ASPECT_RATIO_3_2: {
             a_ratio = 3.0 / 2;
             break;
         }
-        case ASPECT_RATIO_14_9: {
+        case SDK::ASPECT_RATIO_14_9: {
             a_ratio = 14.0 / 9;
             break;
         }
-        case ASPECT_RATIO_16_10: {
+        case SDK::ASPECT_RATIO_16_10: {
             a_ratio = 16.0 / 10;
             break;
         }
 
-        case ASPECT_RATIO_16_9: {
+        case SDK::ASPECT_RATIO_16_9: {
             a_ratio = 16.0 / 9;
             break;
         }
-        case ASPECT_RATIO_2_35_1: {
+        case SDK::ASPECT_RATIO_2_35_1: {
             a_ratio = 2.35 / 1;
             break;
         }
@@ -318,9 +318,9 @@ void QtAVMediaPlayerObject::setAspectRatio(AspectRatio ratio)
     renderer->setOutAspectRatio(a_ratio);
 }
 
-AspectRatio QtAVMediaPlayerObject::getAspectRatio()
+SDK::AspectRatio QtAVMediaPlayerObject::getAspectRatio()
 {
-    return (AspectRatio)m_aspect_ratio;
+    return (SDK::AspectRatio)m_aspect_ratio;
 }
 
 void QtAVMediaPlayerObject::move(int x, int y)
@@ -462,7 +462,7 @@ MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
     return metadata;
 }
 
-PluginObjectResult QtAVMediaPlayerObject::init()
+SDK::PluginObjectResult QtAVMediaPlayerObject::init()
 {
     STUB();
 
@@ -481,7 +481,7 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     videoWidget = new OpenGLWidgetRenderer();
     widget()->show();
     QOpenGLWidget* oglWidget = openGlWidget();
-    if(Core::instance()->getVM() != Core::VM_VIRTUAL_BOX && oglWidget != NULL)
+    if(SDK::Core::instance()->getVM() != SDK::Core::VM_VIRTUAL_BOX && oglWidget != NULL)
     {
         QPair<int,int> opengl_version = oglWidget->context()->format().version();
         if(!openGlWidget()->isValid() || opengl_version.first < 2) // if version is 1.1 it's probably a VirtualBox or other virtualization software
@@ -516,12 +516,12 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     mediaPlayer->setInterruptTimeout(10000);
     mediaPlayer->setRenderer(videoWidget);
 
-    ConfigItem* decoder = m_qtav_settings->findItemByPath("video/decoder");
+    SDK::ConfigItem* decoder = m_qtav_settings->findItemByPath("video/decoder");
     QString decoder_name = decoder->value().toString();
     if(decoder_name.isEmpty())
     {
         decoder->setValue(decoder->getDefaultValue());
-        m_yasem_settings->save(static_cast<ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
+        m_yasem_settings->save(static_cast<SDK::ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
     }
     else
     {
@@ -549,12 +549,12 @@ PluginObjectResult QtAVMediaPlayerObject::init()
     connect(mediaPlayer, SIGNAL(saturationChanged(int)),          this, SIGNAL(saturationChanged(int)));
     connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
 
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 
-PluginObjectResult QtAVMediaPlayerObject::deinit()
+SDK::PluginObjectResult QtAVMediaPlayerObject::deinit()
 {
-    return PLUGIN_OBJECT_RESULT_OK;
+    return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
 
 QPoint QtAVMediaPlayerObject::getWidgetPos() const
