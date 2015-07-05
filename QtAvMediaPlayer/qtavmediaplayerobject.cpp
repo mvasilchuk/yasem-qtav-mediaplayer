@@ -66,6 +66,7 @@ void QtAVMediaPlayerObject::customMessageHandler(QtMsgType type, const QMessageL
 void QtAVMediaPlayerObject::initSettings()
 {
     m_qtav_settings = new SDK::ConfigTreeGroup("qtav-player", "qtav", tr("QtAV"));
+    m_qtav_settings->setEnabled(false);
     SDK::ConfigTreeGroup* qtav_video = new SDK::ConfigTreeGroup("video", tr("Video settings"));
     SDK::ConfigTreeGroup* qtav_audio = new SDK::ConfigTreeGroup("audio", tr("Audio settings"));
 
@@ -529,6 +530,8 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
     {
         m_media_player->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder_name.toStdString()));
     }
+
+    m_qtav_settings->setEnabled(true);
 
     /*
     QString current_renderer = QString::fromStdString(VideoRendererFactory::name(mediaPlayer->renderer()->id()));
