@@ -76,7 +76,7 @@ public:
 
 protected:
     QtAV::VideoRenderer* videoWidget;
-    QtAV::AVPlayer* mediaPlayer;
+    QtAV::AVPlayer* m_media_player;
     SDK::AspectRatio m_aspect_ratio;
     SDK::YasemSettings* m_yasem_settings;
     SDK::ConfigTreeGroup* m_qtav_settings;

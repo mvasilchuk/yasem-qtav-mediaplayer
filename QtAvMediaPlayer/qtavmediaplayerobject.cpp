@@ -24,6 +24,7 @@ using namespace QtAV;
 
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(SDK::Plugin* plugin):
     SDK::MediaPlayerPluginObject(plugin),
+    m_media_player(NULL),
     m_aspect_ratio(SDK::ASPECT_RATIO_AUTO),
     m_yasem_settings(SDK::Core::instance()->yasem_settings())
 {
@@ -94,7 +95,8 @@ void QtAVMediaPlayerObject::initSettings()
     connect(video_decoder_priority, &SDK::ConfigItem::saved, [=]() {
         QString decoder = video_decoder_priority->getValue().toString();
         DEBUG() << "setting a new decoder" << decoder;
-        mediaPlayer->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder.toStdString()));
+        if(m_media_player)
+            m_media_player->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder.toStdString()));
     });
 
     m_qtav_settings->addItem(qtav_video);
@@ -183,7 +185,7 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
 {
     if(!processHooks(MediaPlayerPluginObject::BEFORE_PLAY)) return false;
 
-    mediaPlayer->play(url);
+    m_media_player->play(url);
     m_aspect_ratio = (SDK::AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
     //videoWidget->show();
     setAspectRatio(m_aspect_ratio);
@@ -193,19 +195,19 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
 
 bool QtAVMediaPlayerObject::mediaContinue()
 {
-    mediaPlayer->pause(false);
+    m_media_player->pause(false);
     return true;
 }
 
 bool QtAVMediaPlayerObject::mediaPause()
 {
-    mediaPlayer->pause(true);
+    m_media_player->pause(true);
     return true;
 }
 
 bool QtAVMediaPlayerObject::mediaStop()
 {
-    mediaPlayer->stop();
+    m_media_player->stop();
     return true;
 }
 
@@ -257,7 +259,7 @@ void QtAVMediaPlayerObject::setAspectRatio(SDK::AspectRatio ratio)
 
     m_aspect_ratio = ratio;
 
-    QtAV::VideoRenderer* renderer = mediaPlayer->renderer();
+    QtAV::VideoRenderer* renderer = m_media_player->renderer();
 
     if(m_aspect_ratio == SDK::ASPECT_RATIO_AUTO)
     {
@@ -331,13 +333,13 @@ void QtAVMediaPlayerObject::move(int x, int y)
 int QtAVMediaPlayerObject::getAudioPID() const
 {
     STUB();
-    return mediaPlayer->currentAudioStream();
+    return m_media_player->currentAudioStream();
 }
 
 void QtAVMediaPlayerObject::setAudioPID(int pid)
 {
     STUB() << pid;
-    mediaPlayer->setAudioStream(pid);
+    m_media_player->setAudioStream(pid);
 }
 
 int QtAVMediaPlayerObject::bufferLoad() const
@@ -348,51 +350,51 @@ int QtAVMediaPlayerObject::bufferLoad() const
 
 qint64 QtAVMediaPlayerObject::getPosition() const
 {
-    qint64 pos = mediaPlayer->position();
+    qint64 pos = m_media_player->position();
     return pos;
 }
 
 qint64 QtAVMediaPlayerObject::getDuration() const
 {
     STUB();
-    qint64 duration = mediaPlayer->duration();
+    qint64 duration = m_media_player->duration();
     return duration;
 }
 
 int QtAVMediaPlayerObject::getBrightness() const
 {
-    return mediaPlayer->brightness();
+    return m_media_player->brightness();
 }
 
 void yasem::QtAVMediaPlayerObject::setBrightness(int brightness)
 {
-    mediaPlayer->setBrightness(brightness);
+    m_media_player->setBrightness(brightness);
 }
 
 int QtAVMediaPlayerObject::getContrast() const
 {
-    return mediaPlayer->contrast();
+    return m_media_player->contrast();
 }
 
 void yasem::QtAVMediaPlayerObject::setContrast(int contrast)
 {
-    mediaPlayer->setContrast(contrast);
+    m_media_player->setContrast(contrast);
 }
 
 int yasem::QtAVMediaPlayerObject::getSaturation() const
 {
-    return mediaPlayer->saturation();
+    return m_media_player->saturation();
 }
 
 void yasem::QtAVMediaPlayerObject::setSaturation(int saturation)
 {
-    mediaPlayer->setSaturation(saturation);
+    m_media_player->setSaturation(saturation);
 }
 
 QList<AudioLangInfo> QtAVMediaPlayerObject::getAudioLanguages()
 {
     QList<AudioLangInfo> languages;
-    int count = mediaPlayer->audioStreamCount();
+    int count = m_media_player->audioStreamCount();
     for(int index = 0; index < count; index++)
     {
         languages.append(AudioLangInfo(index, QString::number(index), QString::number(index)));
@@ -402,38 +404,38 @@ QList<AudioLangInfo> QtAVMediaPlayerObject::getAudioLanguages()
 
 void QtAVMediaPlayerObject::setAudioLanguage(int index)
 {
-    mediaPlayer->setAudioStream(index);
+    m_media_player->setAudioStream(index);
 }
 
 int QtAVMediaPlayerObject::getLoop() const
 {
-    return mediaPlayer->repeat();
+    return m_media_player->repeat();
 }
 
 void QtAVMediaPlayerObject::setLoop(int loop)
 {
-    mediaPlayer->setRepeat(loop);
+    m_media_player->setRepeat(loop);
 }
 
 bool QtAVMediaPlayerObject::isMute() const
 {
-    return mediaPlayer->isMute();
+    return m_media_player->isMute();
 }
 
 void QtAVMediaPlayerObject::setMute(bool value)
 {
-    mediaPlayer->setMute(value);
+    m_media_player->setMute(value);
 }
 
 void QtAVMediaPlayerObject::setPosition(qint64 pos)
 {
-    mediaPlayer->setPosition(pos);
+    m_media_player->setPosition(pos);
 }
 
 int QtAVMediaPlayerObject::getVolume() const
 {
     STUB();
-    AudioOutput* audio = mediaPlayer->audio();
+    AudioOutput* audio = m_media_player->audio();
     if(audio != NULL)
     {
         return (int)(audio->volume() * 100);
@@ -444,7 +446,7 @@ int QtAVMediaPlayerObject::getVolume() const
 void QtAVMediaPlayerObject::setVolume(int vol)
 {
     STUB() << vol;
-    AudioOutput* audio = mediaPlayer->audio();
+    AudioOutput* audio = m_media_player->audio();
     if(audio != NULL)
     {
         if(vol > 0)
@@ -457,7 +459,7 @@ void QtAVMediaPlayerObject::setVolume(int vol)
 MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
 {
     MediaMetadata metadata;
-    metadata.filename = mediaPlayer->file();
+    metadata.filename = m_media_player->file();
 
     return metadata;
 }
@@ -511,10 +513,10 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
     connect(videoWidget, SIGNAL(imageReady), this, SIGNAL(rendered));
 #endif //USE_REAL_TRANSPARENCY
 
-    mediaPlayer = new QtAV::AVPlayer();
-    mediaPlayer->setAsyncLoad(true);
-    mediaPlayer->setInterruptTimeout(10000);
-    mediaPlayer->setRenderer(videoWidget);
+    m_media_player = new QtAV::AVPlayer();
+    m_media_player->setAsyncLoad(true);
+    m_media_player->setInterruptTimeout(10000);
+    m_media_player->setRenderer(videoWidget);
 
     SDK::ConfigItem* decoder = m_qtav_settings->findItemByPath("video/decoder");
     QString decoder_name = decoder->value().toString();
@@ -525,7 +527,7 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
     }
     else
     {
-        mediaPlayer->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder_name.toStdString()));
+        m_media_player->setPriority(QVector<VideoDecoderId>() << VideoDecoderFactory::id(decoder_name.toStdString()));
     }
 
     /*
@@ -535,19 +537,19 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
 
     //FIXME() << "Media player signals not connected under Windows!";
     // New signal/slot connection doesn't work under windows  because signal defines two times
-    connect(mediaPlayer, SIGNAL(paused(bool)),                    this, SIGNAL(paused(bool)));
-    connect(mediaPlayer, SIGNAL(started()),                       this, SIGNAL(started()));
-    connect(mediaPlayer, SIGNAL(stopped()),                       this, SIGNAL(stopped()));
-    connect(mediaPlayer, SIGNAL(speedChanged(qreal)),             this, SIGNAL(speedChanged(qreal)));
-    connect(mediaPlayer, SIGNAL(repeatChanged(int)),              this, SIGNAL(repeatChanged(int)));
-    connect(mediaPlayer, SIGNAL(currentRepeatChanged(int)),       this, SIGNAL(currentRepeatChanged(int)));
-    connect(mediaPlayer, SIGNAL(startPositionChanged(qint64)),    this, SIGNAL(startPositionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(stopPositionChanged(qint64)),     this, SIGNAL(stopPositionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(positionChanged(qint64)),         this, SIGNAL(positionChanged(qint64)));
-    connect(mediaPlayer, SIGNAL(brightnessChanged(int)),          this, SIGNAL(brightnessChanged(int)));
-    connect(mediaPlayer, SIGNAL(contrastChanged(int)),            this, SIGNAL(contrastChanged(int)));
-    connect(mediaPlayer, SIGNAL(saturationChanged(int)),          this, SIGNAL(saturationChanged(int)));
-    connect(mediaPlayer, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
+    connect(m_media_player, SIGNAL(paused(bool)),                    this, SIGNAL(paused(bool)));
+    connect(m_media_player, SIGNAL(started()),                       this, SIGNAL(started()));
+    connect(m_media_player, SIGNAL(stopped()),                       this, SIGNAL(stopped()));
+    connect(m_media_player, SIGNAL(speedChanged(qreal)),             this, SIGNAL(speedChanged(qreal)));
+    connect(m_media_player, SIGNAL(repeatChanged(int)),              this, SIGNAL(repeatChanged(int)));
+    connect(m_media_player, SIGNAL(currentRepeatChanged(int)),       this, SIGNAL(currentRepeatChanged(int)));
+    connect(m_media_player, SIGNAL(startPositionChanged(qint64)),    this, SIGNAL(startPositionChanged(qint64)));
+    connect(m_media_player, SIGNAL(stopPositionChanged(qint64)),     this, SIGNAL(stopPositionChanged(qint64)));
+    connect(m_media_player, SIGNAL(positionChanged(qint64)),         this, SIGNAL(positionChanged(qint64)));
+    connect(m_media_player, SIGNAL(brightnessChanged(int)),          this, SIGNAL(brightnessChanged(int)));
+    connect(m_media_player, SIGNAL(contrastChanged(int)),            this, SIGNAL(contrastChanged(int)));
+    connect(m_media_player, SIGNAL(saturationChanged(int)),          this, SIGNAL(saturationChanged(int)));
+    connect(m_media_player, SIGNAL(mediaStatusChanged(QtAV::MediaStatus)),  this, SLOT(onMediaStatusChanged(QtAV::MediaStatus)));
 
     return SDK::PLUGIN_OBJECT_RESULT_OK;
 }
