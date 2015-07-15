@@ -2,7 +2,7 @@
 #define QTAVMEDIAPLAYEROBJECT_H
 
 #include "macros.h"
-#include "mediaplayerpluginobject.h"
+#include "mediaplayer.h"
 
 #include "QtAV/AVPlayer.h"
 
@@ -15,11 +15,11 @@ class QSettings;
 namespace yasem {
 
 namespace SDK {
-class GuiPluginObject;
+class GUI;
 class ConfigTreeGroup;
 }
 
-class QtAVMediaPlayerObject: public SDK::MediaPlayerPluginObject
+class QtAVMediaPlayerObject: public SDK::MediaPlayer
 {
     Q_OBJECT
 public:
@@ -78,7 +78,7 @@ protected:
     QtAV::VideoRenderer* videoWidget;
     QtAV::AVPlayer* m_media_player;
     SDK::AspectRatio m_aspect_ratio;
-    SDK::YasemSettings* m_yasem_settings;
+    SDK::Config* m_yasem_settings;
     SDK::ConfigTreeGroup* m_qtav_settings;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);

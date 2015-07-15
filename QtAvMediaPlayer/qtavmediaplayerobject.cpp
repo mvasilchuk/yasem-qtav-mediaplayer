@@ -1,8 +1,8 @@
 #include "qtavmediaplayerobject.h"
-#include "guipluginobject.h"
+#include "gui.h"
 #include "pluginmanager.h"
 #include "core.h"
-#include "yasemsettings.h"
+#include "config.h"
 #include "configuration_items.h"
 
 #include "QtAV/AVPlayer.h"
@@ -23,7 +23,7 @@ using namespace yasem;
 using namespace QtAV;
 
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(SDK::Plugin* plugin):
-    SDK::MediaPlayerPluginObject(plugin),
+    SDK::MediaPlayer(plugin),
     m_media_player(NULL),
     m_aspect_ratio(SDK::ASPECT_RATIO_AUTO),
     m_yasem_settings(SDK::Core::instance()->yasem_settings())
@@ -131,6 +131,7 @@ void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
         }
         case QtAV::MediaStatus::LoadingMedia: {
             emit statusChanged(SDK::MediaStatus::LoadingMedia);
+            emit statusChanged(SDK::MediaStatus::VideoInfoReceived); // TODO: Should be in another place
             break;
         }
         case QtAV::MediaStatus::StalledMedia: {
@@ -184,14 +185,14 @@ QWidget *QtAVMediaPlayerObject::widget() const
 
 bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
 {
-    if(!processHooks(MediaPlayerPluginObject::BEFORE_PLAY)) return false;
+    if(!processHooks(MediaPlayer::BEFORE_PLAY)) return false;
 
     m_media_player->play(url);
     m_aspect_ratio = (SDK::AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
     //videoWidget->show();
     setAspectRatio(m_aspect_ratio);
 
-    return processHooks(MediaPlayerPluginObject::AFTER_PLAY);
+    return processHooks(MediaPlayer::AFTER_PLAY);
 }
 
 bool QtAVMediaPlayerObject::mediaContinue()
@@ -570,5 +571,5 @@ QPoint QtAVMediaPlayerObject::getWidgetPos() const
 
 void QtAVMediaPlayerObject::resize()
 {
-    MediaPlayerPluginObject::resize();
+    MediaPlayer::resize();
 }
