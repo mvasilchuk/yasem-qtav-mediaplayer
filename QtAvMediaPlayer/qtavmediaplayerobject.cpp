@@ -2,7 +2,7 @@
 #include "gui.h"
 #include "pluginmanager.h"
 #include "core.h"
-#include "config.h"
+#include "yasemsettings.h"
 #include "configuration_items.h"
 
 #include "QtAV/AVPlayer.h"
