@@ -78,12 +78,18 @@ protected:
     QtAV::VideoRenderer* videoWidget;
     QtAV::AVPlayer* m_media_player;
     SDK::AspectRatio m_aspect_ratio;
-    SDK::Config* m_yasem_settings;
     SDK::ConfigTreeGroup* m_qtav_settings;
 
     static void customMessageHandler(QtMsgType, const QMessageLogContext &, const QString &);
+
+    //#if defined(__has_feature)
+    //#  if __has_feature(address_sanitizer)
+    __attribute__((no_sanitize("address")))
+    //#  endif
+    //#endif
     void initSettings();
     QOpenGLWidget* openGlWidget() const;
+    SDK::Config* settings() const;
 
 
 public slots:

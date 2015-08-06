@@ -25,8 +25,7 @@ using namespace QtAV;
 QtAVMediaPlayerObject::QtAVMediaPlayerObject(SDK::Plugin* plugin):
     SDK::MediaPlayer(plugin),
     m_media_player(NULL),
-    m_aspect_ratio(SDK::ASPECT_RATIO_AUTO),
-    m_yasem_settings(SDK::Core::instance()->yasem_settings())
+    m_aspect_ratio(SDK::ASPECT_RATIO_AUTO)
 {
     m_support_opengl = true;
     QtAV::setFFmpegLogHandler(NULL);
@@ -84,14 +83,19 @@ void QtAVMediaPlayerObject::initSettings()
 
     QString default_decoder_name = QString::fromStdString(VideoDecoderFactory::name(QtAV::VideoDecoderId_FFmpeg));
     SDK::ListConfigItem* video_decoder_priority = new SDK::ListConfigItem("decoder", tr("Decoder"), default_decoder_name);
-    for(const std::string &name: VideoDecoderFactory::registeredNames())
+
+    // TODO: fix exception in commented code (debug mode only)
+    /*
+    std::vector<std::string> vec = VideoDecoderFactory::registeredNames();
+    for(const std::string name:  vec)
     {
         const QString s_name = QString::fromStdString(name);
         QString title = s_name;
         if(title == default_decoder_name)
             title.append(tr(" (default)"));
         video_decoder_priority->options().insert(title, s_name);
-    }
+    }*/
+
     qtav_video->addItem(video_decoder_priority);
     connect(video_decoder_priority, &SDK::ConfigItem::saved, [=]() {
         QString decoder = video_decoder_priority->getValue().toString();
@@ -103,8 +107,8 @@ void QtAVMediaPlayerObject::initSettings()
     m_qtav_settings->addItem(qtav_video);
     m_qtav_settings->addItem(qtav_audio);
 
-    m_yasem_settings->findItem(SETTINGS_GROUP_PLUGINS)->addItem(m_qtav_settings);
-    m_yasem_settings->load();
+    settings()->findItem(SETTINGS_GROUP_PLUGINS)->addItem(m_qtav_settings);
+    settings()->load();
 }
 
 /**
@@ -188,7 +192,7 @@ bool QtAVMediaPlayerObject::mediaPlay(const QString &url)
     if(!processHooks(MediaPlayer::BEFORE_PLAY)) return false;
 
     m_media_player->play(url);
-    m_aspect_ratio = (SDK::AspectRatio)m_yasem_settings->findItem("/media/video/aspect_ratio")->value().toInt();
+    m_aspect_ratio = (SDK::AspectRatio)settings()->findItem("/media/video/aspect_ratio")->value().toInt();
     //videoWidget->show();
     setAspectRatio(m_aspect_ratio);
 
@@ -466,6 +470,11 @@ MediaMetadata QtAVMediaPlayerObject::getMediaMetadata()
     return metadata;
 }
 
+SDK::Config *QtAVMediaPlayerObject::settings() const
+{
+    return SDK::Core::instance()->yasem_settings();
+}
+
 SDK::PluginObjectResult QtAVMediaPlayerObject::init()
 {
     STUB();
@@ -525,7 +534,7 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
     if(decoder_name.isEmpty())
     {
         decoder->setValue(decoder->getDefaultValue());
-        m_yasem_settings->save(static_cast<SDK::ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
+        settings()->save(static_cast<SDK::ConfigContainer*>(m_qtav_settings->findItemByKey("video")));
     }
     else
     {
