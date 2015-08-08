@@ -29,8 +29,12 @@ HEADERS +=\
     ../QtAV/src/QtAV/AVPlayer.h \
     qtavmediaplayer_global.h \
     qtavmediaplayerplugin.h \
-    qtavmediaplayerobject.h \
+    qtavmediaplayerobject.h
+
+win32: {
+HEADERS +=\
     $${SDK_DIR}/mediaplayer.h
+}
 
 unix {
     target.path = /usr/lib
