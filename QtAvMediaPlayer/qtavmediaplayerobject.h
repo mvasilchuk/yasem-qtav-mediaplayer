@@ -43,7 +43,7 @@ public:
     SDK::MediaPlayingState state();
     bool state(SDK::MediaPlayingState state);
     void setAspectRatio(SDK::AspectRatio ratio);
-    SDK::AspectRatio getAspectRatio();
+    SDK::AspectRatio getAspectRatio() const;
     void move(int x, int y);
 
     int getAudioPID() const;

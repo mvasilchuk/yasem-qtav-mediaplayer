@@ -326,7 +326,7 @@ void QtAVMediaPlayerObject::setAspectRatio(SDK::AspectRatio ratio)
     renderer->setOutAspectRatio(a_ratio);
 }
 
-SDK::AspectRatio QtAVMediaPlayerObject::getAspectRatio()
+SDK::AspectRatio QtAVMediaPlayerObject::getAspectRatio() const
 {
     return (SDK::AspectRatio)m_aspect_ratio;
 }
