@@ -151,7 +151,7 @@ void QtAVMediaPlayerObject::onMediaStatusChanged(QtAV::MediaStatus status)
             break;
         }
         case QtAV::MediaStatus::EndOfMedia: {
-            emit statusChanged(SDK::MediaStatus::EndOfMedia);
+            //emit statusChanged(SDK::MediaStatus::EndOfMedia);
             break;
         }
         case QtAV::MediaStatus::InvalidMedia: {
