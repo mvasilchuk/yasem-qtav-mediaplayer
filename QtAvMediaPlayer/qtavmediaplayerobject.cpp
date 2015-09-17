@@ -175,10 +175,6 @@ QWidget *QtAVMediaPlayerObject::parent()
     return widget()->parentWidget();
 }
 
-void QtAVMediaPlayerObject::widget(QWidget *videoWidget)
-{
-    //this->videoWidget = videoWidget;
-}
 
 QWidget *QtAVMediaPlayerObject::widget() const
 {
@@ -235,6 +231,7 @@ void QtAVMediaPlayerObject::hide()
 void QtAVMediaPlayerObject::rect(const QRect &rect)
 {
     widget()->setGeometry(rect);
+    DEBUG() << "Widget geometry:" << widget()->geometry();
 }
 
 QRect QtAVMediaPlayerObject::rect() const
@@ -493,6 +490,7 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
 
     videoWidget = new OpenGLWidgetRenderer();
     widget()->show();
+    widget()->setObjectName("QtAV OpenGLWidgetRenderer");
     QOpenGLWidget* oglWidget = openGlWidget();
     if(SDK::Core::instance()->getVM() != SDK::Core::VM_VIRTUAL_BOX && oglWidget != NULL)
     {
@@ -525,6 +523,7 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
 #endif //USE_REAL_TRANSPARENCY
 
     m_media_player = new QtAV::AVPlayer();
+    m_media_player->setObjectName("QtAV AVPlayer");
     m_media_player->setAsyncLoad(true);
     m_media_player->setInterruptTimeout(10000);
     m_media_player->setRenderer(videoWidget);

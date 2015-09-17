@@ -28,7 +28,6 @@ public:
 
     void parent(QWidget *parent);
     QWidget *parent();
-    void widget(QWidget *videoWidget);
     QWidget *widget() const;
     bool mediaPlay(const QString &url);
     bool mediaContinue();
