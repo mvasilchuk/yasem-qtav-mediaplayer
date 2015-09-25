@@ -492,7 +492,7 @@ SDK::PluginObjectResult QtAVMediaPlayerObject::init()
     widget()->show();
     widget()->setObjectName("QtAV OpenGLWidgetRenderer");
     QOpenGLWidget* oglWidget = openGlWidget();
-    if(SDK::Core::instance()->getVM() != SDK::Core::VM_VIRTUAL_BOX && oglWidget != NULL)
+    if(SDK::Core::instance()->featureAvailable(SDK::Core::FEATURE_OPENGL) && oglWidget != NULL)
     {
         QPair<int,int> opengl_version = oglWidget->context()->format().version();
         if(!openGlWidget()->isValid() || opengl_version.first < 2) // if version is 1.1 it's probably a VirtualBox or other virtualization software
