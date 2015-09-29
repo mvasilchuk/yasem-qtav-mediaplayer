@@ -105,6 +105,10 @@ public:
     QPoint getWidgetPos() const;
 
     void resize();
+
+    // MediaPlayer interface
+public:
+    void setParentWidget(QWidget *parent);
 };
 
 }

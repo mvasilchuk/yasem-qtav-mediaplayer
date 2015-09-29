@@ -581,3 +581,9 @@ void QtAVMediaPlayerObject::resize()
 {
     MediaPlayer::resize();
 }
+
+
+void yasem::QtAVMediaPlayerObject::setParentWidget(QWidget *parent)
+{
+    widget()->setParent(parent);
+}
