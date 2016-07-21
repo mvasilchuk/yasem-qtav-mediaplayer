@@ -422,12 +422,12 @@ void QtAVMediaPlayerObject::setLoop(int loop)
 
 bool QtAVMediaPlayerObject::isMute() const
 {
-    return m_media_player->isMute();
+    return m_media_player->audio()->isMute();
 }
 
 void QtAVMediaPlayerObject::setMute(bool value)
 {
-    m_media_player->setMute(value);
+    m_media_player->audio()->setMute(value);
 }
 
 void QtAVMediaPlayerObject::setPosition(qint64 pos)
